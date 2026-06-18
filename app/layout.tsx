@@ -9,7 +9,7 @@ const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Daniel Rodriguez | Full-Stack Developer",
   description:
-    "Daniel Rodriguez, Full-Stack Developer and Systems Engineering student in Bogota, Colombia. Portfolio, projects, skills, education, and contact.",
+    "Daniel Rodriguez, Full-Stack Developer and Systems Engineering student in Bogotá, Colombia. Portfolio, projects, skills, education, and contact.",
   openGraph: {
     title: "Daniel Rodriguez | Full-Stack Developer",
     description:
