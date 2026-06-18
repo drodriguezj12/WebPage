@@ -5,7 +5,7 @@ import { motion, useMotionValue, useSpring } from "framer-motion";
 
 export function CustomCursor() {
   const [isPointer, setIsPointer] = useState(false);
-  const [isActive, setIsActive] = useState(false);
+  const [isEnabled, setIsEnabled] = useState<boolean | null>(null);
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
   const springX = useSpring(cursorX, { stiffness: 500, damping: 40 });
@@ -14,9 +14,15 @@ export function CustomCursor() {
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
-    if (prefersReducedMotion || isTouchDevice) return;
+    const shouldEnable = !prefersReducedMotion && !isTouchDevice;
 
-    setIsActive(true);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsEnabled(shouldEnable);
+
+    if (!shouldEnable) {
+      return;
+    }
+
     document.body.style.cursor = "none";
 
     function handleMove(event: PointerEvent) {
@@ -33,7 +39,7 @@ export function CustomCursor() {
     };
   }, [cursorX, cursorY]);
 
-  if (!isActive) return null;
+  if (!isEnabled) return null;
 
   return (
     <motion.div
