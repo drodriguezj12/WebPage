@@ -13,6 +13,8 @@ const NAV_LINKS = [
   { href: "#contact", label: "Contact" },
 ];
 
+const LINKEDIN_URL = "https://www.linkedin.com/in/daniel-rodriguez-b795a8406/";
+
 export function Nav() {
   const [activeHref, setActiveHref] = useState("#home");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -48,7 +50,7 @@ export function Nav() {
           href="#home"
           className="flex items-center gap-2 font-display text-sm font-semibold text-text"
         >
-          <span className="grid h-10 w-10 place-items-center rounded-lg bg-text text-bg">
+          <span className="grid h-10 w-10 place-items-center rounded-lg border border-accent/30 bg-accent-soft text-accent">
             DR
           </span>
           <span className="hidden sm:inline">Daniel Rodriguez</span>
@@ -78,6 +80,27 @@ export function Nav() {
             ))}
           </ul>
         </nav>
+
+        <div className="hidden items-center gap-2 md:flex">
+          <a
+            href={LINKEDIN_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Daniel Rodriguez on LinkedIn"
+            className="grid h-11 w-11 place-items-center rounded-md border border-border text-muted transition-colors hover:border-accent/40 hover:text-accent"
+          >
+            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
+              <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.03-1.85-3.03-1.85 0-2.14 1.45-2.14 2.94v5.66H9.36V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z" />
+            </svg>
+          </a>
+          <a
+            href="/cv.pdf"
+            download
+            className="inline-flex h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-text transition-colors hover:border-accent/40 hover:text-accent"
+          >
+            Download CV
+          </a>
+        </div>
 
         <button
           type="button"
@@ -123,6 +146,23 @@ export function Nav() {
               </li>
             ))}
           </ul>
+          <div className="mt-3 flex gap-2 border-t border-border pt-3">
+            <a
+              href={LINKEDIN_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex h-11 flex-1 items-center justify-center rounded-md border border-border text-sm font-semibold text-muted"
+            >
+              LinkedIn
+            </a>
+            <a
+              href="/cv.pdf"
+              download
+              className="flex h-11 flex-1 items-center justify-center rounded-md border border-border text-sm font-semibold text-text"
+            >
+              Download CV
+            </a>
+          </div>
         </nav>
       )}
     </header>

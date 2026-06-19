@@ -10,10 +10,48 @@
   --color-accent-soft: #2a0d02;
   --font-display: var(--font-geist-sans);
   --font-sans: var(--font-inter);
+
+  --gradient-accent: linear-gradient(100deg, #ff6a3d, #ff9e2c);
 }
 
 html {
   scroll-behavior: smooth;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 28s linear infinite;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.45;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 0.7;
+  }
+}
+
+.animate-breathe {
+  animation: breathe 7s ease-in-out infinite;
+}
+
+.text-gradient-accent {
+  background-image: var(--gradient-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 body {

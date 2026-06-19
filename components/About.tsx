@@ -26,7 +26,9 @@ export function About() {
     <section id="about" className="border-t border-border py-24">
       <div className="mx-auto w-full max-w-6xl px-4">
         <RevealOnScroll className="mb-10 max-w-2xl">
-          <p className="mb-3 text-sm font-bold uppercase tracking-widest text-accent">
+          <p className="mb-3 flex items-center gap-3 text-sm font-bold uppercase tracking-widest text-accent">
+            <span className="text-muted">01</span>
+            <span className="h-px w-6 bg-border" aria-hidden="true" />
             About me
           </p>
           <h2 className="text-4xl font-semibold tracking-tight sm:text-5xl">
@@ -43,15 +45,17 @@ export function About() {
           <RevealOnScroll className="rounded-2xl border border-border bg-surface p-7">
             <h3 className="text-xl font-semibold">Professional profile</h3>
             <p className="mt-3 text-muted">
-              I&apos;m a Full-Stack Developer with 3+ years of experience building and
-              optimizing web applications using Java, Spring Boot, Angular, PostgreSQL, Oracle,
-              MongoDB, Docker, virtual machines, JavaScript, and Python.
-            </p>
-            <p className="mt-3 text-muted">
-              Improved query response times by up to 30% through backend optimization,
-              efficient data handling, and large-scale contract data processing. Working with
-              RESTful APIs, scalable system design, database performance, and collaborative
-              client-facing development.
+              Full-Stack Developer with 3+ years of experience building and optimizing
+              production-grade web applications using Java, Spring Boot, and Angular.
+              Demonstrated ability to improve query response times by up to 30% through
+              backend optimization and efficient database query design. Experienced in
+              designing RESTful APIs, microservices architecture (Kafka, Quarkus), and
+              integrating AI-powered features using LLM APIs (OpenAI, Claude) for both
+              professional and personal projects. Proficient in PostgreSQL, Oracle, MongoDB,
+              Docker, Kubernetes, and AWS. Strong track record of collaborating with clients,
+              leading small development teams, and delivering business-oriented solutions.
+              Actively seeking Full-Stack, Backend, or AI-integrated Software Engineering
+              roles.
             </p>
           </RevealOnScroll>
 

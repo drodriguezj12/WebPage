@@ -3,6 +3,7 @@
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import type { MouseEvent } from "react";
 import type { Project } from "@/data/projects";
+import { VideoEmbed } from "./VideoEmbed";
 
 export function ProjectCard({ project }: { project: Project }) {
   const x = useMotionValue(0);
@@ -38,23 +39,15 @@ export function ProjectCard({ project }: { project: Project }) {
         <div>
           <h3 className="text-lg font-semibold">{project.title}</h3>
           <p className="mt-1 text-muted">{project.description}</p>
-          {project.demoUrl && (
-            <a
-              href={project.demoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 inline-flex h-10 items-center gap-2 rounded-md border border-accent/30 bg-accent-soft px-3 text-sm font-bold text-accent"
-            >
-              Watch demo
-            </a>
-          )}
         </div>
         <span className="whitespace-nowrap rounded-full bg-bg px-2.5 py-1.5 text-xs font-extrabold text-accent">
           {project.tag}
         </span>
       </div>
 
-      <ul className="mb-5 grid gap-2 text-sm text-text">
+      {project.demoUrl && <VideoEmbed url={project.demoUrl} title={project.title} />}
+
+      <ul className="mb-5 mt-5 grid gap-2 text-sm text-text">
         {project.achievements.map((achievement) => (
           <li key={achievement} className="grid grid-cols-[8px_1fr] items-start gap-2.5">
             <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-accent" />

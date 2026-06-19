@@ -9,7 +9,9 @@ export function Skills() {
     <section id="skills" className="border-t border-border bg-surface/40 py-24">
       <div className="mx-auto w-full max-w-6xl px-4">
         <RevealOnScroll className="mb-10 max-w-2xl">
-          <p className="mb-3 text-sm font-bold uppercase tracking-widest text-accent">
+          <p className="mb-3 flex items-center gap-3 text-sm font-bold uppercase tracking-widest text-accent">
+            <span className="text-muted">04</span>
+            <span className="h-px w-6 bg-border" aria-hidden="true" />
             Skills
           </p>
           <h2 className="text-4xl font-semibold tracking-tight sm:text-5xl">

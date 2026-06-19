@@ -6,7 +6,7 @@ export type EducationItem = {
 export const educationItems: EducationItem[] = [
   {
     institution: "Universidad El Bosque",
-    description: "Systems Engineering Student, 8th semester. Bogotá, Colombia.",
+    description: "Systems Engineering Student, 9th semester. Bogotá, Colombia.",
   },
   {
     institution: "Instituto Colombo Americano",
