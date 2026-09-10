@@ -46,7 +46,8 @@ them later.
 | Display type | Big Shoulders Display 800, uppercase | Instrument Serif; Inter Tight; Fraunces; Anton; Archivo Black; Syne; Bricolage Grotesque; Unbounded |
 | Body type | Inter, with JetBrains Mono for labels and figures | Inter alone; IBM Plex Sans |
 | Cover layout | Headline plus numbered project index | Full-bleed headline; editorial split |
-| Motion | Maximum: generative background, magnetic cursor, section transitions | Cinematic without WebGL; restrained reveals |
+| Motion | Maximum: WebGL background, magnetic cursor, section transitions | Cinematic without WebGL; restrained reveals |
+| Animation runtime | GSAP + ScrollTrigger + Lenis + OGL | framer-motion (removed); three.js (6-14x the weight for no visual gain here); hand-written canvas 2D |
 
 Two notes on consequences the author accepted knowingly:
 
@@ -55,10 +56,14 @@ copy, and a very large condensed headline breaks awkwardly on narrow screens. Th
 a second and third typeface are part of the system rather than a nicety, and why the
 cover headline has explicit per-breakpoint line breaks (see below).
 
-**Maximum motion costs performance.** The mitigation is that the generative background is
-hand-written canvas 2D rather than WebGL or three.js. It produces the same effect at this
-scale, adds no dependency, and can be switched off entirely. If the author later wants
-real WebGL, that is a separate change with its own budget.
+**Maximum motion costs performance.** The mitigation is not to avoid the tools but to
+choose them by measurement, and to keep every heavy thing off the critical path. Measured
+in this project, gzipped: GSAP core 27.6 KB, ScrollTrigger 17.5 KB, Lenis 5.3 KB, OGL
+19.6 KB — against three.js at 128-280 KB. three.js earns its weight when there are models,
+lights and materials; for a shader background and image distortion it buys nothing OGL
+does not. framer-motion is removed rather than kept alongside GSAP: two animation runtimes
+competing for the same scroll is a source of bugs, not a capability. Net effect, the site
+gains roughly 20 KB over what it ships today and does considerably more.
 
 ## Visual system
 
@@ -157,7 +162,7 @@ cubic-bezier with a slow exit.
 
 | Element | Behaviour |
 |---|---|
-| Background | Canvas 2D line field, slow drift, curving near the pointer. Low density, single `requestAnimationFrame`, paused when off-screen |
+| Background | WebGL shader field (OGL), slow drift, reacting to the pointer. Capped pixel ratio, 30fps, paused off-screen, loaded after first paint |
 | Cover headline | Revealed line by line behind a mask — the text rises from behind an invisible edge, not a fade |
 | Mono labels | Short character scramble before settling |
 | Header | Collapses on scroll into a thin bar showing the active section number and name |
@@ -171,30 +176,34 @@ cubic-bezier with a slow exit.
 
 These are requirements, not preferences:
 
-- `prefers-reduced-motion: reduce` disables the canvas, the pin, the scramble, the wipe
+- `prefers-reduced-motion: reduce` disables the shader, the pin, the scramble, the wipe
   and the count-up. The site stays complete and readable.
-- `pointer: coarse` disables the canvas and the magnetic cursor. Phones get the typography
+- `pointer: coarse` disables the shader and the magnetic cursor. Phones get the typography
   and the reveals, not the parts that cost battery.
 - Nothing hijacks scrolling. Pinned sections advance with the scroll and release it.
 - No animation gates content. Text is in the DOM and readable with JavaScript disabled.
-- The canvas is `aria-hidden` and never receives focus.
+- The shader canvas is `aria-hidden` and never receives focus.
 
 ## Architecture
 
 New motion primitives, each with one responsibility and no knowledge of the sections that
 use them:
 
+**Dependencies.** `gsap` (with ScrollTrigger), `lenis`, `ogl` are added; `framer-motion`
+is removed.
+
 ```
 components/motion/
-  CanvasField.tsx      generative background
+  ShaderField.tsx      WebGL background (OGL), dynamically imported
   SplitText.tsx        line-by-line reveal
   Stagger.tsx          sequenced entry for a group
   CountUp.tsx          figures counting on entry
   MagneticCursor.tsx   replaces CustomCursor
   Pinned.tsx           pinned section with beats
   ScrambleText.tsx     mono label settle
-lib/motion.ts          durations, easings, breakpoint helpers
+lib/motion.ts          durations, easings, GSAP defaults
 lib/useReducedMotion.ts  single source for the two opt-out conditions
+lib/smoothScroll.ts    Lenis setup, wired to ScrollTrigger
 ```
 
 Sections rewritten: `Cover`, `PulseFeature`, `Work`, `HowIWork`, `Track`, `Contact`.
@@ -215,13 +224,33 @@ breaks if a project lacks them.
 
 ## Performance
 
-Budget: the cover's JavaScript stays at or under **120 KB gzipped**. If the canvas pushes
-past it, the canvas gets simpler — legibility and load time are not the variables that
-give.
+The budget is stated as an outcome, not a byte count. A byte ceiling on the whole bundle
+would be the wrong instrument: what a visitor feels is when the first screen appears and
+whether scrolling stutters, not what the total transfer adds up to.
 
-The canvas runs one animation loop, throttles to 30fps on the background layer, and stops
-entirely when its section leaves the viewport. Images are sized and served through
-`next/image`. Fonts are self-hosted and subset.
+**Targets**
+
+- The headline paints in under 2.5s on a mid-range phone over 4G.
+- Scrolling holds 60fps on desktop and does not stutter on a mid-range phone.
+- Nothing heavy blocks first paint.
+
+**Rules that produce those targets**
+
+- The WebGL background is imported dynamically and initialised after first paint. It never
+  sits on the critical path, and the page is complete without it.
+- It renders at a capped pixel ratio, throttles to 30fps, and stops entirely when its
+  section leaves the viewport or the tab is hidden.
+- It does not run at all on `pointer: coarse` or under `prefers-reduced-motion`.
+- Images go through `next/image`, sized, in AVIF/WebP.
+- Fonts are self-hosted and subset through `next/font`.
+
+**Reference point.** The site as it stands today serves 242 KB of gzipped JavaScript
+across 15 files, with no background, no scroll choreography and no imagery. That is the
+number any claim of "heavier" or "lighter" should be measured against, and it is measured
+from the build output, not estimated.
+
+If the targets are missed, the order of sacrifice is fixed: shader complexity first, then
+the pinned sequence, then the count-ups. Typography, layout and legibility never give.
 
 ## Accessibility
 
@@ -235,7 +264,7 @@ keyboard, including the project index on the cover.
 ## Verification
 
 - `npm run lint`, `npm test`, `npm run build` after each slice.
-- Bundle size checked against the budget from the build output.
+- Bundle size measured from the build output and compared against the 242 KB baseline.
 - Manual checks of the `prefers-reduced-motion` path, the `pointer: coarse` path, and the
   page with JavaScript disabled.
 - Existing tests must stay green; new pure logic (scramble, count-up stepping, motion
@@ -256,8 +285,11 @@ only on his approval.
 
 - **Condensed uppercase at small widths.** Mitigated with per-breakpoint line breaks and a
   lower display size at base; needs a real check on a phone.
-- **Maximum motion on mid-range hardware.** Mitigated by canvas 2D, the fps throttle, the
-  off-screen pause and the coarse-pointer opt-out. Still the first thing to cut if the
-  preview feels heavy.
+- **Maximum motion on mid-range hardware.** Mitigated by choosing OGL over three.js, the
+  dynamic import, the fps and pixel-ratio caps, the off-screen pause and the coarse-pointer
+  opt-out. Still the first thing to cut if the preview feels heavy.
+- **Consolidating on GSAP.** Removing framer-motion means every existing animation is
+  rewritten rather than ported. That is deliberate — the sections are being rewritten
+  anyway — but it does mean no component keeps its old motion code.
 - **Near-neutral palette reading as lifeless.** This is the risk the direction accepts.
   The counterweights are type scale, generous space, and the single `signal` accent.
