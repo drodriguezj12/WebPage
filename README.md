@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Daniel Rodriguez — Portfolio
 
-## Getting Started
+Personal site: **https://danielrodriguezportfolio.vercel.app**
 
-First, run the development server:
+A single page — hero, about, projects, education, skills and contact — built with the
+Next.js App Router. Projects carry an embedded demo video and, where the code is public,
+a link to the repository. The contact form delivers straight to my inbox.
+
+## Stack
+
+Next.js 16 (App Router, Turbopack) · React 19 · TypeScript · Tailwind CSS 4 ·
+framer-motion · Vitest · Resend for transactional email · deployed on Vercel.
+
+## Running it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Script | Purpose |
+|---|---|
+| `npm run dev` | development server |
+| `npm run build` | production build |
+| `npm run lint` | ESLint |
+| `npm test` | Vitest suite |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Everything runs without configuration; email is the exception. Without a key the contact
+form falls back to opening the visitor's own mail client, so nothing breaks — messages
+just travel a slower path.
 
-## Learn More
+| Variable | Required | Default | What it does |
+|---|---|---|---|
+| `RESEND_API_KEY` | for email | — | Resend API key. Without it `/api/contact` answers `503` and the form falls back to `mailto:`. |
+| `CONTACT_TO_EMAIL` | no | `drodriguezj1267@gmail.com` | Where form messages are delivered. |
+| `CONTACT_FROM_EMAIL` | no | `Portfolio <onboarding@resend.dev>` | Sender. Resend's shared address needs no domain of your own, but only delivers to the address that registered the account; a verified domain lifts that. |
+| `NEXT_PUBLIC_SITE_URL` | no | production domain | Origin for canonical links, Open Graph images and the sitemap. |
 
-To learn more about Next.js, take a look at the following resources:
+Set them in Vercel under Settings → Environment Variables, or in a local `.env.local`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+app/          layout, page, opengraph-image, icon, robots, sitemap
+  api/contact route handler that validates and sends the contact message
+components/   one component per section, plus Nav, Footer and the visual effects
+data/         projects, skills and education — the content lives here
+lib/          site URLs, contact validation and message building (unit tested)
+```
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+To add a project, append an entry to `data/projects.ts`: `demoUrl` renders a
+click-to-play YouTube embed, and `repoUrl` adds a link to the source. Both are optional.
