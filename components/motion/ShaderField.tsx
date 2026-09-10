@@ -88,9 +88,11 @@ export default function ShaderField({ className = "" }: { className?: string }) 
     }
     window.addEventListener("pointermove", onPointer);
 
-    // Three independent reasons to stop drawing: off-screen, hidden tab, or
-    // simply between frames at the 30fps cap.
-    let visible = true;
+    // Two independent conditions. Combining them with AND is the point: a
+    // single shared flag lets whichever fired last decide, so returning to the
+    // tab would resume a shader whose section is still off-screen.
+    let inViewport = true;
+    let tabVisible = true;
 
     let frame = 0;
     let last = 0;
@@ -99,7 +101,7 @@ export default function ShaderField({ className = "" }: { className?: string }) 
     function loop(now: number) {
       // Ending the chain here is the point: an off-screen background that
       // keeps waking every frame is exactly the cost this design avoids.
-      if (!visible) {
+      if (!inViewport || !tabVisible) {
         frame = 0;
         return;
       }
@@ -121,20 +123,23 @@ export default function ShaderField({ className = "" }: { className?: string }) 
       }
     }
 
+    function sync() {
+      if (inViewport && tabVisible) start();
+      else stop();
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        visible = entry.isIntersecting;
-        if (visible) start();
-        else stop();
+        inViewport = entry.isIntersecting;
+        sync();
       },
       { threshold: 0 },
     );
     observer.observe(mount);
 
     const onVisibility = () => {
-      visible = document.visibilityState === "visible";
-      if (visible) start();
-      else stop();
+      tabVisible = document.visibilityState === "visible";
+      sync();
     };
     document.addEventListener("visibilitychange", onVisibility);
 
