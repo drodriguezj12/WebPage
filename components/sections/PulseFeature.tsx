@@ -1,0 +1,82 @@
+import { projects } from "@/data/projects";
+import { SectionHeader } from "@/components/SectionHeader";
+import { Pinned } from "@/components/motion/Pinned";
+import { VideoEmbed } from "@/components/VideoEmbed";
+
+export function PulseFeature() {
+  const pulse = projects[0];
+
+  return (
+    <section id="pulse" className="relative border-t border-border py-24">
+      <div
+        aria-hidden="true"
+        className="grid-overlay pointer-events-none absolute inset-0 -z-10 opacity-40"
+      />
+      <div className="mx-auto w-full max-w-[1440px] px-6">
+        <SectionHeader
+          index="01"
+          label="Featured"
+          lines={["Pulse —", "real time,", "end to end"]}
+        />
+
+        <Pinned
+          className="relative"
+          beats={[
+            <div key="what" className="grid gap-8 lg:grid-cols-2 lg:items-center">
+              <p className="max-w-[46ch] text-lg leading-relaxed text-muted">
+                {pulse.description}
+              </p>
+              <ul className="flex flex-wrap gap-2">
+                {pulse.tech.map((tech) => (
+                  <li key={tech} className="label border border-border px-3 py-2">
+                    {tech}
+                  </li>
+                ))}
+              </ul>
+            </div>,
+
+            <div key="demo" className="mx-auto w-full max-w-3xl">
+              {pulse.demoUrl ? (
+                <VideoEmbed url={pulse.demoUrl} title={pulse.title} />
+              ) : null}
+            </div>,
+
+            <div key="decisions" className="grid gap-8 md:grid-cols-3">
+              {pulse.achievements.slice(0, 3).map((achievement, index) => (
+                <div key={achievement}>
+                  <span className="label block">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <p className="mt-4 text-base leading-relaxed text-muted">{achievement}</p>
+                </div>
+              ))}
+            </div>,
+          ]}
+        />
+
+        <div className="mt-16 flex flex-wrap gap-4">
+          {pulse.repoUrl ? (
+            <a
+              className="label border border-border px-5 py-4 hover:border-steel hover:text-steel focus-visible:text-steel focus-visible:border-steel focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-steel"
+              href={pulse.repoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View code on GitHub
+            </a>
+          ) : null}
+          {pulse.demoUrl ? (
+            <a
+              className="label border border-border px-5 py-4 hover:border-steel hover:text-steel focus-visible:text-steel focus-visible:border-steel focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-steel"
+              href={pulse.demoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Watch the demo
+            </a>
+          ) : null}
+        </div>
+      </div>
+    </section>
+  );
+}
