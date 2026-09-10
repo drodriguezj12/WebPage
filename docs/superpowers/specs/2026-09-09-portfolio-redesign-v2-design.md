@@ -323,5 +323,15 @@ only on his approval.
 - **Consolidating on GSAP.** Removing framer-motion means every existing animation is
   rewritten rather than ported. That is deliberate — the sections are being rewritten
   anyway — but it does mean no component keeps its old motion code.
+- **Pinned section reflow on load (accepted).** The server renders the Pulse beats
+  stacked, because that is the only layout readable without JavaScript or under reduced
+  motion. After hydration, visitors who allow motion get the overlapping pinned layout, so
+  the beats fold into one cell. The cover fills the first viewport, so on a normal visit
+  this finishes before anyone reaches the section; it is visible only on arrival through a
+  direct link to `#pulse`. The section's top edge does not move, and the pin spacer that
+  ScrollTrigger inserts at runtime would shift layout on such an arrival anyway, so
+  removing the fold would not remove the jump. Rejected alternative: an inline head script
+  plus CSS that pre-renders the pinned state, which needs a hydration-warning suppression
+  on `<html>` and duplicates animation state in CSS for a narrow case.
 - **Near-neutral palette reading as lifeless.** This is the risk the direction accepts.
   The counterweights are type scale, generous space, and the single `signal` accent.
