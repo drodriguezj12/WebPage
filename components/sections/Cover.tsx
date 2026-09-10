@@ -65,11 +65,11 @@ export function Cover() {
           {projects.map((project, index) => (
             <Link
               key={project.title}
-              href="#work"
-              className="group border-b border-border bg-bg py-6 pr-6 transition-colors hover:bg-surface focus-visible:bg-surface focus-visible:outline-none"
+              href={index === 0 ? "#pulse" : "#work"}
+              className="group border-b border-border bg-bg py-6 pr-6 transition-colors hover:bg-surface focus-visible:bg-surface focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-steel"
             >
               <span className="label block">{String(index + 1).padStart(2, "0")}</span>
-              <span className="display mt-3 block text-[26px] group-hover:text-steel">
+              <span className="display mt-3 block text-[26px] group-hover:text-steel group-focus-visible:text-steel">
                 {project.shortName ?? project.title}
               </span>
               <span className="label mt-2 block">{project.discipline}</span>
