@@ -91,9 +91,41 @@ export default function ShaderField({ className = "" }: { className?: string }) 
     // Three independent reasons to stop drawing: off-screen, hidden tab, or
     // simply between frames at the 30fps cap.
     let visible = true;
+
+    let frame = 0;
+    let last = 0;
+    const MIN_STEP = 1000 / 30;
+
+    function loop(now: number) {
+      // Ending the chain here is the point: an off-screen background that
+      // keeps waking every frame is exactly the cost this design avoids.
+      if (!visible) {
+        frame = 0;
+        return;
+      }
+      frame = requestAnimationFrame(loop);
+      if (now - last < MIN_STEP) return;
+      last = now;
+      program.uniforms.uTime.value = now * 0.001;
+      renderer.render({ scene: mesh });
+    }
+
+    function start() {
+      if (!frame) frame = requestAnimationFrame(loop);
+    }
+
+    function stop() {
+      if (frame) {
+        cancelAnimationFrame(frame);
+        frame = 0;
+      }
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         visible = entry.isIntersecting;
+        if (visible) start();
+        else stop();
       },
       { threshold: 0 },
     );
@@ -101,24 +133,15 @@ export default function ShaderField({ className = "" }: { className?: string }) 
 
     const onVisibility = () => {
       visible = document.visibilityState === "visible";
+      if (visible) start();
+      else stop();
     };
     document.addEventListener("visibilitychange", onVisibility);
 
-    let frame = 0;
-    let last = 0;
-    const MIN_STEP = 1000 / 30;
-
-    function loop(now: number) {
-      frame = requestAnimationFrame(loop);
-      if (!visible || now - last < MIN_STEP) return;
-      last = now;
-      program.uniforms.uTime.value = now * 0.001;
-      renderer.render({ scene: mesh });
-    }
-    frame = requestAnimationFrame(loop);
+    start();
 
     return () => {
-      cancelAnimationFrame(frame);
+      stop();
       observer.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("resize", resize);

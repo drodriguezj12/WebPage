@@ -16,10 +16,14 @@ export function ShaderFieldMount({ className = "" }: { className?: string }) {
   const [afterPaint, setAfterPaint] = useState(false);
 
   useEffect(() => {
-    const id = window.requestAnimationFrame(() =>
-      window.requestAnimationFrame(() => setAfterPaint(true)),
-    );
-    return () => window.cancelAnimationFrame(id);
+    let inner = 0;
+    const outer = window.requestAnimationFrame(() => {
+      inner = window.requestAnimationFrame(() => setAfterPaint(true));
+    });
+    return () => {
+      window.cancelAnimationFrame(outer);
+      if (inner) window.cancelAnimationFrame(inner);
+    };
   }, []);
 
   if (!heavy || !afterPaint) return null;
