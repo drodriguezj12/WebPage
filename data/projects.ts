@@ -9,6 +9,20 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    title: "Pulse — Real-Time Social Network",
+    tag: "Open source",
+    description:
+      "Social network where likes, new posts and deletions reach every open session over WebSocket, built as two Spring Boot microservices behind an Angular single-page app.",
+    achievements: [
+      "Broadcast likes, posts and deletions over WebSocket/STOMP so every open feed updates on its own, with no polling and no reload.",
+      "Split the backend into two independent Spring Boot services with separate schemas and Flyway migrations, decoupled by self-contained JWTs instead of service-to-service calls.",
+      "Made likes idempotent inside PL/pgSQL stored procedures and paginated the feed by keyset, so the tenth page costs the same as the first.",
+      "Covered the stack with 95 tests, integration tests included against a real PostgreSQL through Testcontainers, run on every push by GitHub Actions.",
+    ],
+    tech: ["Java 21", "Spring Boot", "Angular 19", "PostgreSQL", "WebSocket", "Docker", "Testcontainers"],
+    demoUrl: "https://youtu.be/POKikhqDtYo",
+  },
+  {
     title: "Smart Parking Management Platform",
     tag: "Real-time",
     description:
