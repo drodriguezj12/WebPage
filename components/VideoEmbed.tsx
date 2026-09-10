@@ -15,7 +15,7 @@ export function VideoEmbed({ url, title }: { url: string; title: string }) {
 
   if (isPlaying) {
     return (
-      <div className="relative mt-3 aspect-video overflow-hidden rounded-md border border-border">
+      <div className="relative mt-3 aspect-video overflow-hidden border border-border">
         <iframe
           src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
           title={`${title} demo video`}
@@ -32,7 +32,7 @@ export function VideoEmbed({ url, title }: { url: string; title: string }) {
       type="button"
       onClick={() => setIsPlaying(true)}
       aria-label={`Play ${title} demo video`}
-      className="group relative mt-3 block aspect-video w-full overflow-hidden rounded-md border border-border"
+      className="group relative mt-3 block aspect-video w-full overflow-hidden border border-border focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-steel"
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
@@ -42,7 +42,7 @@ export function VideoEmbed({ url, title }: { url: string; title: string }) {
         className="h-full w-full object-cover"
       />
       <span className="absolute inset-0 flex items-center justify-center bg-bg/40 transition-colors group-hover:bg-bg/20">
-        <span className="grid h-12 w-12 place-items-center rounded-full bg-accent text-bg">
+        <span className="grid h-12 w-12 place-items-center rounded-full bg-steel text-bg">
           <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
             <path d="M8 5v14l11-7z" />
           </svg>
