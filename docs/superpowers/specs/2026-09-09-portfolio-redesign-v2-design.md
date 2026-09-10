@@ -90,12 +90,12 @@ links, not for hover states, not for anything else.
 | Role | Face | Treatment |
 |---|---|---|
 | Display | Big Shoulders 800 | Uppercase, `letter-spacing: -0.01em`, `line-height: 0.86–0.92` |
+| Body | Inter 400/500/600 | `line-height: 1.6`, max 46ch measure |
+| Label | JetBrains Mono 400/500 | 10–11px, `letter-spacing: 0.14–0.2em`, uppercase |
 
 Google renamed this family: what was published as "Big Shoulders Display" is now simply
 "Big Shoulders", and it is the name `next/font/google` exposes. The Inline and Stencil
 cuts are different faces and are not used.
-| Body | Inter 400/500/600 | `line-height: 1.6`, max 46ch measure |
-| Label | JetBrains Mono 400/500 | 10–11px, `letter-spacing: 0.14–0.2em`, uppercase |
 
 All three load through `next/font` — self-hosted, no runtime request to Google, no layout
 shift.
