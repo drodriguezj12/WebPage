@@ -15,7 +15,7 @@
 - All code, comments, commit messages and site copy in **English**. Spec sections quoted below use the spec's exact values.
 - Colour tokens, exact values: `bg #08080A`, `surface #0E0E11`, `border #1B1B20`, `text #F2F2F4`, `muted #86868F`, `dim #6F6F78`, `steel #CBD5E1`, `signal #F5A524`.
 - `signal` has **exactly one** use on the whole page: the "available for work" dot. Never for links, hovers or anything else.
-- Type: Big Shoulders Display 800 uppercase for display, Inter 400/500/600 for body, JetBrains Mono 400/500 for labels. All via `next/font`.
+- Type: Big Shoulders 800 uppercase for display, Inter 400/500/600 for body, JetBrains Mono 400/500 for labels. All via `next/font`.
 - Display sizes: 130px at `xl`, 96px at `lg`, 68px at `md`, 44px at base. Cover headline uses explicit per-breakpoint line breaks.
 - Motion timings: 600–800ms section scale, 200–300ms interface feedback.
 - `prefers-reduced-motion: reduce` disables shader, pin, scramble, wipe and count-up.
@@ -175,9 +175,9 @@ body {
 In `app/layout.tsx`, replace the two font imports and their instances:
 
 ```tsx
-import { Big_Shoulders_Display, Inter, JetBrains_Mono } from "next/font/google";
+import { Big_Shoulders, Inter, JetBrains_Mono } from "next/font/google";
 
-const display = Big_Shoulders_Display({
+const display = Big_Shoulders({
   variable: "--font-big-shoulders",
   subsets: ["latin"],
   weight: ["500", "700", "800"],
@@ -199,7 +199,7 @@ and the `<html>` class:
 - [ ] **Step 4: Verify the build compiles with the new tokens**
 
 Run: `npm run build`
-Expected: `✓ Compiled successfully`. The page still renders with old components; colours will look wrong because the old components reference `accent`. That is expected until Task 13 — **only** if the build fails on an unknown utility do you fix it here, by leaving the old class in place.
+Expected: `✓ Compiled successfully`. The page still renders with old components; colours will look wrong because the old components reference `accent`. That is expected until Task 16 — **only** if the build fails on an unknown utility do you fix it here, by leaving the old class in place.
 
 - [ ] **Step 5: Commit**
 
@@ -477,7 +477,7 @@ and add the import:
 import { SmoothScrollProvider } from "@/components/motion/SmoothScrollProvider";
 ```
 
-Leave `components/ScrollProgress.tsx` and `components/CustomCursor.tsx` on disk; they are deleted in Task 13.
+Leave `components/ScrollProgress.tsx` and `components/CustomCursor.tsx` on disk; they are deleted in Task 16.
 
 - [ ] **Step 4: Verify**
 
@@ -1299,7 +1299,7 @@ git commit -m "feat(motion): add the WebGL field, loaded after first paint"
 
 **Interfaces:**
 - Consumes: `ScrambleText`, `SplitText`.
-- Produces: `Project` gains `discipline?: string` and `cover?: string`; every project gets a `discipline`. `<SectionHeader index={string} label={string} lines={ReactNode[]} />`.
+- Produces: `Project` gains `shortName?: string`, `discipline?: string` and `cover?: string`; every project gets both `shortName` and `discipline`. `<SectionHeader index={string} label={string} lines={ReactNode[]} />`.
 
 - [ ] **Step 1: Add the two optional fields**
 
@@ -1314,6 +1314,8 @@ export type Project = {
   tech: string[];
   demoUrl?: string;
   repoUrl?: string;
+  /** Name for the cover index, where the full title does not fit. */
+  shortName?: string;
   /** One word for the cover index. Uppercase, no punctuation. */
   discipline?: string;
   /** Path under /public for the card image. */
@@ -1327,13 +1329,13 @@ Add to each entry, in order:
 
 ```ts
 // Pulse
-discipline: "REAL-TIME",
+shortName: "Pulse", discipline: "REAL-TIME",
 // Smart Parking Management Platform
-discipline: "EVENT-DRIVEN",
+shortName: "SmartPark", discipline: "EVENT-DRIVEN",
 // E-commerce Platform with AI Chatbot Integration
-discipline: "AI CHATBOT",
+shortName: "Commerce", discipline: "AI CHATBOT",
 // Contract Data Processing System
-discipline: "PRODUCTION",
+shortName: "Contracts", discipline: "PRODUCTION",
 ```
 
 - [ ] **Step 3: Write the shared header**
@@ -1476,7 +1478,7 @@ export function Cover() {
             >
               <span className="label block">{String(index + 1).padStart(2, "0")}</span>
               <span className="display mt-3 block text-[26px] group-hover:text-steel">
-                {project.title.split(" ")[0]}
+                {project.shortName ?? project.title}
               </span>
               <span className="label mt-2 block">{project.discipline}</span>
             </Link>

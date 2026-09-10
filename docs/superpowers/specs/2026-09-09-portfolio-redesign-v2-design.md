@@ -43,7 +43,7 @@ them later.
 | Visual direction | Editorial, cinematic | Industrial brutalism (too risky with corporate recruiters); light minimalism; polishing the current design |
 | Scope | New narrative, single page, rewritten copy | Reskin only; full rebuild with project pages |
 | Accent | Pale steel `#CBD5E1` | Keeping coral; electric cyan; signal lime; frost blue |
-| Display type | Big Shoulders Display 800, uppercase | Instrument Serif; Inter Tight; Fraunces; Anton; Archivo Black; Syne; Bricolage Grotesque; Unbounded |
+| Display type | Big Shoulders 800, uppercase | Instrument Serif; Inter Tight; Fraunces; Anton; Archivo Black; Syne; Bricolage Grotesque; Unbounded |
 | Body type | Inter, with JetBrains Mono for labels and figures | Inter alone; IBM Plex Sans |
 | Cover layout | Headline plus numbered project index | Full-bleed headline; editorial split |
 | Motion | Maximum: WebGL background, magnetic cursor, section transitions | Cinematic without WebGL; restrained reveals |
@@ -89,7 +89,11 @@ links, not for hover states, not for anything else.
 
 | Role | Face | Treatment |
 |---|---|---|
-| Display | Big Shoulders Display 800 | Uppercase, `letter-spacing: -0.01em`, `line-height: 0.86–0.92` |
+| Display | Big Shoulders 800 | Uppercase, `letter-spacing: -0.01em`, `line-height: 0.86–0.92` |
+
+Google renamed this family: what was published as "Big Shoulders Display" is now simply
+"Big Shoulders", and it is the name `next/font/google` exposes. The Inline and Stencil
+cuts are different faces and are not used.
 | Body | Inter 400/500/600 | `line-height: 1.6`, max 46ch measure |
 | Label | JetBrains Mono 400/500 | 10–11px, `letter-spacing: 0.14–0.2em`, uppercase |
 
