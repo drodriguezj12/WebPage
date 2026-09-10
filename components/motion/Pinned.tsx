@@ -4,6 +4,8 @@ import { useEffect, useRef, type ReactNode } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useMotionAllowed } from "@/lib/useReducedMotion";
+import { DURATION, EASE } from "@/lib/motion";
+import { scrollToY } from "@/lib/scrollControl";
 
 /**
  * Holds a section in place while its beats advance with the scroll. Without
@@ -71,8 +73,8 @@ export function Pinned({
         items.forEach((item, index) => {
           if (index === 0) return;
           timeline
-            .to(items[index - 1], { opacity: 0, y: -40 })
-            .to(item, { opacity: 1, y: 0 }, "<");
+            .to(items[index - 1], { opacity: 0, y: -40, duration: DURATION.section, ease: EASE.inOut })
+            .to(item, { opacity: 1, y: 0, duration: DURATION.section, ease: EASE.inOut }, "<");
         });
 
         const trigger = timeline.scrollTrigger;
@@ -87,7 +89,7 @@ export function Pinned({
             if (!trigger) return;
             const span = trigger.end - trigger.start;
             const target = trigger.start + (span * index) / Math.max(1, items.length - 1);
-            window.scrollTo({ top: target, behavior: "auto" });
+            scrollToY(target);
           };
           item.addEventListener("focusin", handleFocusIn);
           removeListeners.push(() => item.removeEventListener("focusin", handleFocusIn));
@@ -105,14 +107,22 @@ export function Pinned({
 
     return () => {
       // ctx.revert() undoes GSAP tweens and ScrollTriggers, but it does not
-      // remove listeners added with addEventListener — those are torn down
-      // here explicitly, on every unmount and every change of `animate`.
+      // remove listeners added with addEventListener, nor the inline
+      // pointer-events this effect wrote directly to the DOM (outside GSAP,
+      // so revert never sees them) — both are torn down here explicitly, on
+      // every unmount and every change of `animate`.
       ctx.revert();
       removeListeners.forEach((remove) => remove());
+      const items = gsap.utils.toArray<HTMLElement>("[data-beat]", el);
+      items.forEach((item) => {
+        item.style.pointerEvents = "";
+      });
     };
   }, [animate]);
 
-  const containerClassName = [animate ? "grid" : "", className].filter(Boolean).join(" ");
+  const containerClassName = [animate ? "grid" : "flex flex-col gap-16", className]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <div ref={ref} className={containerClassName}>
