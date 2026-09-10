@@ -1,5 +1,6 @@
 import { RevealOnScroll } from "./RevealOnScroll";
 import { ContactForm } from "./ContactForm";
+import { GITHUB_URL, LINKEDIN_URL } from "@/lib/site";
 
 export function Contact() {
   return (
@@ -15,8 +16,8 @@ export function Contact() {
             Ready to discuss a role, project, or collaboration.
           </h2>
           <p className="mt-3 text-lg text-muted">
-            Use the form or contact me directly by email or phone. The form validates your
-            message and opens your email client with the content prepared.
+            Use the form or reach me directly by email, phone or GitHub. The form sends the
+            message straight to my inbox, and replies land back in yours.
           </p>
         </RevealOnScroll>
 
@@ -84,6 +85,36 @@ export function Contact() {
                   </svg>
                 </span>
                 Bogotá, Colombia
+              </li>
+              <li>
+                <a
+                  href={GITHUB_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 font-bold text-text"
+                >
+                  <span className="grid h-11 w-11 place-items-center rounded-md bg-accent-soft text-accent">
+                    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
+                      <path d="M12 .5a12 12 0 0 0-3.79 23.4c.6.1.82-.26.82-.58v-2.2c-3.34.72-4.04-1.6-4.04-1.6-.55-1.4-1.34-1.77-1.34-1.77-1.1-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.84 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.8 5.63-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.21.69.82.57A12 12 0 0 0 12 .5z" />
+                    </svg>
+                  </span>
+                  github.com/drodriguezj12
+                </a>
+              </li>
+              <li>
+                <a
+                  href={LINKEDIN_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 font-bold text-text"
+                >
+                  <span className="grid h-11 w-11 place-items-center rounded-md bg-accent-soft text-accent">
+                    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
+                      <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.03-1.85-3.03-1.85 0-2.14 1.45-2.14 2.94v5.66H9.36V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z" />
+                    </svg>
+                  </span>
+                  LinkedIn profile
+                </a>
               </li>
             </ul>
           </RevealOnScroll>
