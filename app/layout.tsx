@@ -9,6 +9,10 @@ const display = Big_Shoulders({
   variable: "--font-big-shoulders",
   subsets: ["latin"],
   weight: ["500", "700", "800"],
+  // Next cannot derive override metrics for this family, so it generates no
+  // adjusted fallback. These faces are condensed, which keeps the reflow small
+  // while the webfont loads.
+  fallback: ["Arial Narrow", "Helvetica Neue Condensed", "sans-serif"],
 });
 const sans = Inter({ variable: "--font-inter", subsets: ["latin"] });
 const mono = JetBrains_Mono({
