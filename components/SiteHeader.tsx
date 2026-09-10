@@ -27,10 +27,14 @@ export function SiteHeader() {
   useEffect(() => {
     const onScroll = () => setCollapsed(window.scrollY > 120);
     onScroll();
-    // Enable the transition one frame after the corrected height has painted.
-    // Setting state from a frame callback also keeps it out of the effect body,
-    // which this repo's react-hooks lint rules flag.
-    const frame = requestAnimationFrame(() => setReady(true));
+    // Two frames, not one. A frame callback runs before that frame paints, so
+    // with a single one the corrected height and the transition class would
+    // reach the screen together and the header would still animate. The outer
+    // frame lets the corrected height paint; the inner one enables the transition.
+    let inner = 0;
+    const outer = requestAnimationFrame(() => {
+      inner = requestAnimationFrame(() => setReady(true));
+    });
     window.addEventListener("scroll", onScroll, { passive: true });
 
     const observer = new IntersectionObserver(
@@ -50,7 +54,8 @@ export function SiteHeader() {
     }
 
     return () => {
-      cancelAnimationFrame(frame);
+      cancelAnimationFrame(outer);
+      if (inner) cancelAnimationFrame(inner);
       window.removeEventListener("scroll", onScroll);
       observer.disconnect();
     };
