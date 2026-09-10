@@ -3,14 +3,14 @@ import { Geist, Inter } from "next/font/google";
 import "./globals.css";
 import { CustomCursor } from "@/components/CustomCursor";
 import { ScrollProgress } from "@/components/ScrollProgress";
+import { SITE_URL } from "@/lib/site";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
-  ),
+  metadataBase: new URL(SITE_URL),
+  alternates: { canonical: "/" },
   title: "Daniel Rodriguez | Full-Stack Developer",
   description:
     "Daniel Rodriguez, Full-Stack Developer and Systems Engineering student in Bogotá, Colombia. Portfolio, projects, skills, education, and contact.",
@@ -20,6 +20,7 @@ export const metadata: Metadata = {
       "Full-Stack Developer specialized in Java, Spring Boot, Angular, REST APIs, databases, and production-ready web applications.",
     type: "website",
     locale: "en_US",
+    url: SITE_URL,
   },
 };
 
