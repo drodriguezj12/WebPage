@@ -6,6 +6,8 @@
 export const DURATION = {
   /** Interface feedback: hover, press, focus. */
   feedback: 0.24,
+  /** Pointer tracking: the longest an interface response may take. */
+  follow: 0.3,
   /** A single element entering or leaving. */
   element: 0.6,
   /** Section-scale movement: wipes, pinned beats. */
