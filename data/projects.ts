@@ -6,6 +6,12 @@ export type Project = {
   tech: string[];
   demoUrl?: string;
   repoUrl?: string;
+  /** Name for the cover index, where the full title does not fit. */
+  shortName?: string;
+  /** One word for the cover index. Uppercase, no punctuation. */
+  discipline?: string;
+  /** Path under /public for the card image. */
+  cover?: string;
 };
 
 export const projects: Project[] = [
@@ -23,6 +29,8 @@ export const projects: Project[] = [
     tech: ["Java 21", "Spring Boot", "Angular 19", "PostgreSQL", "WebSocket", "Docker", "Testcontainers"],
     demoUrl: "https://youtu.be/POKikhqDtYo",
     repoUrl: "https://github.com/drodriguezj12/pulse-social-network",
+    shortName: "Pulse",
+    discipline: "REAL-TIME",
   },
   {
     title: "Smart Parking Management Platform",
@@ -37,6 +45,8 @@ export const projects: Project[] = [
     ],
     tech: ["Quarkus", "Kafka", "PostgreSQL", "React", "Docker", "Kubernetes", "JUnit 5"],
     demoUrl: "https://youtu.be/gIswiIaDojU",
+    shortName: "SmartPark",
+    discipline: "EVENT-DRIVEN",
   },
   {
     title: "E-commerce Platform with AI Chatbot Integration",
@@ -51,6 +61,8 @@ export const projects: Project[] = [
     ],
     tech: ["Java", "Spring Boot", "Angular", "REST APIs", "Payments", "Notifications"],
     demoUrl: "https://youtu.be/-6_inzLlELU",
+    shortName: "Commerce",
+    discipline: "AI CHATBOT",
   },
   {
     title: "Contract Data Processing System",
@@ -64,5 +76,7 @@ export const projects: Project[] = [
       "Coordinated development tasks and code review within a small delivery team.",
     ],
     tech: ["Spring Boot", "Angular", "PostgreSQL", "Oracle", "MongoDB", "Git"],
+    shortName: "Contracts",
+    discipline: "PRODUCTION",
   },
 ];
