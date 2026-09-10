@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Big_Shoulders, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { SmoothScrollProvider } from "@/components/motion/SmoothScrollProvider";
+import { MagneticCursor } from "@/components/motion/MagneticCursor";
 import { SITE_URL } from "@/lib/site";
 
 const display = Big_Shoulders({
@@ -41,6 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${display.variable} ${sans.variable} ${mono.variable}`}>
       <body className="min-h-screen bg-bg font-sans text-text antialiased">
         <SmoothScrollProvider />
+        <MagneticCursor />
         {children}
       </body>
     </html>
