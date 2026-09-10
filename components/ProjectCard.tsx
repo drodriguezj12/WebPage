@@ -16,7 +16,7 @@ export function ProjectCard({ project }: { project: Project }) {
           alt=""
           width={1200}
           height={675}
-          className="mb-6 h-auto w-full border border-border"
+          className="mb-6 aspect-video h-auto w-full border border-border object-cover"
         />
       ) : null}
 
