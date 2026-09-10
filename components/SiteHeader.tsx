@@ -20,10 +20,17 @@ const SECTIONS = [
 export function SiteHeader() {
   const [active, setActive] = useState(SECTIONS[0]);
   const [collapsed, setCollapsed] = useState(false);
+  // The first measurement must land instantly. Animating it would show every
+  // visitor who reloads mid-page a header shrinking for no reason.
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setCollapsed(window.scrollY > 120);
     onScroll();
+    // Enable the transition one frame after the corrected height has painted.
+    // Setting state from a frame callback also keeps it out of the effect body,
+    // which this repo's react-hooks lint rules flag.
+    const frame = requestAnimationFrame(() => setReady(true));
     window.addEventListener("scroll", onScroll, { passive: true });
 
     const observer = new IntersectionObserver(
@@ -43,6 +50,7 @@ export function SiteHeader() {
     }
 
     return () => {
+      cancelAnimationFrame(frame);
       window.removeEventListener("scroll", onScroll);
       observer.disconnect();
     };
@@ -50,16 +58,16 @@ export function SiteHeader() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 border-b border-border bg-bg/85 backdrop-blur transition-[height] duration-300 ${
-        collapsed ? "h-12" : "h-20"
-      }`}
+      className={`fixed inset-x-0 top-0 z-50 border-b border-border bg-bg/85 backdrop-blur ${
+        ready ? "transition-[height] duration-300" : ""
+      } ${collapsed ? "h-12" : "h-20"}`}
     >
       <div className="mx-auto flex h-full w-full max-w-[1440px] items-center justify-between px-6">
         <Link href="#home" className="display text-lg tracking-normal focus-visible:text-steel focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-steel">
           DR
         </Link>
 
-        <p className="label flex items-center gap-3">
+        <p className="label hidden items-center gap-3 sm:flex">
           <span>{active.index}</span>
           <span aria-hidden="true" className="h-px w-6 bg-border" />
           <span className="text-steel">{active.label}</span>
