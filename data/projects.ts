@@ -5,6 +5,7 @@ export type Project = {
   achievements: string[];
   tech: string[];
   demoUrl?: string;
+  repoUrl?: string;
 };
 
 export const projects: Project[] = [
@@ -21,6 +22,7 @@ export const projects: Project[] = [
     ],
     tech: ["Java 21", "Spring Boot", "Angular 19", "PostgreSQL", "WebSocket", "Docker", "Testcontainers"],
     demoUrl: "https://youtu.be/POKikhqDtYo",
+    repoUrl: "https://github.com/drodriguezj12/pulse-social-network",
   },
   {
     title: "Smart Parking Management Platform",
