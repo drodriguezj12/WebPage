@@ -1,62 +1,60 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #0a0a0c;
-  --color-surface: #121216;
-  --color-border: #1f1f24;
-  --color-text: #f4f4f5;
-  --color-muted: #a1a1aa;
-  --color-accent: #ff6a3d;
-  --color-accent-soft: #2a0d02;
-  --font-display: var(--font-geist-sans);
-  --font-sans: var(--font-inter);
+  --color-bg: #08080a;
+  --color-surface: #0e0e11;
+  --color-border: #1b1b20;
+  --color-text: #f2f2f4;
+  --color-muted: #86868f;
+  --color-dim: #6f6f78;
+  --color-steel: #cbd5e1;
+  --color-signal: #f5a524;
 
-  --gradient-accent: linear-gradient(100deg, #ff6a3d, #ff9e2c);
+  --font-display: var(--font-big-shoulders);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains);
 }
 
 html {
-  scroll-behavior: smooth;
-}
-
-@keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-.animate-marquee {
-  animation: marquee 28s linear infinite;
-}
-
-@keyframes breathe {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.45;
-  }
-  50% {
-    transform: scale(1.18);
-    opacity: 0.7;
-  }
-}
-
-.animate-breathe {
-  animation: breathe 7s ease-in-out infinite;
-}
-
-.text-gradient-accent {
-  background-image: var(--gradient-accent);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  /* Lenis drives scrolling; native smooth scrolling fights it. */
+  scroll-behavior: auto;
 }
 
 body {
   background-color: var(--color-bg);
   color: var(--color-text);
+}
+
+/* Display type: condensed, uppercase, tight. Never used for body copy. */
+.display {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 0.88;
+}
+
+/* Mono label: small, wide, quiet. */
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-dim);
+}
+
+/* Technical-drawing cue. Decorative only. */
+.grid-overlay {
+  background-image:
+    linear-gradient(to right, rgba(203, 213, 225, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(203, 213, 225, 0.04) 1px, transparent 1px);
+  background-size: 96px 96px;
+}
+
+/* A line of a SplitText reveal sits behind this edge until animated. */
+.split-line {
+  display: block;
+  overflow: hidden;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -66,6 +64,5 @@ body {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
   }
 }
