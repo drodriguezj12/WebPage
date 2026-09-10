@@ -14,6 +14,8 @@ const TEXT_FIELDS: { name: ContactFieldName; label: string; type: string; placeh
   { name: "subject", label: "Subject", type: "text", placeholder: "Project or role inquiry" },
 ];
 
+const CONTACT_EMAIL = "drodriguezj1267@gmail.com";
+
 const EMPTY_VALUES: Record<ContactFieldName, string> = {
   name: "",
   email: "",
@@ -24,7 +26,9 @@ const EMPTY_VALUES: Record<ContactFieldName, string> = {
 export function ContactForm() {
   const [values, setValues] = useState<Record<ContactFieldName, string>>(EMPTY_VALUES);
   const [errors, setErrors] = useState<Record<ContactFieldName, string>>(EMPTY_VALUES);
-  const [status, setStatus] = useState("");
+  const [honeypot, setHoneypot] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  const [status, setStatus] = useState<{ tone: "info" | "error"; text: string } | null>(null);
 
   function handleChange(field: ContactFieldName, value: string) {
     setValues((prev) => ({ ...prev, [field]: value }));
@@ -37,9 +41,26 @@ export function ContactForm() {
     setErrors((prev) => ({ ...prev, [field]: validateContactField(field, values[field]) }));
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  function openMailClient() {
+    const body = [
+      `Name: ${values.name.trim()}`,
+      `Email: ${values.email.trim()}`,
+      "",
+      values.message.trim(),
+    ].join("\n");
+
+    setStatus({
+      tone: "info",
+      text: "Opening your email client with the message prepared.",
+    });
+    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
+      values.subject.trim()
+    )}&body=${encodeURIComponent(body)}`;
+  }
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setStatus("");
+    setStatus(null);
 
     const fieldNames = Object.keys(CONTACT_FIELD_RULES) as ContactFieldName[];
     const nextErrors = Object.fromEntries(
@@ -47,30 +68,62 @@ export function ContactForm() {
     ) as Record<ContactFieldName, string>;
     setErrors(nextErrors);
 
-    const isValid = Object.values(nextErrors).every((message) => message === "");
-    if (!isValid) {
-      setStatus("Please review the highlighted fields.");
+    if (Object.values(nextErrors).some((message) => message !== "")) {
+      setStatus({ tone: "error", text: "Please review the highlighted fields." });
       return;
     }
 
-    const body = [
-      `Name: ${values.name.trim()}`,
-      `Email: ${values.email.trim()}`,
-      "",
-      values.message.trim(),
-    ].join("\n");
-    const mailto = `mailto:drodriguezj1267@gmail.com?subject=${encodeURIComponent(
-      values.subject.trim()
-    )}&body=${encodeURIComponent(body)}`;
+    setIsSending(true);
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...values, company: honeypot }),
+      });
 
-    setStatus("Opening your email client with the message prepared.");
-    window.location.href = mailto;
-    setValues(EMPTY_VALUES);
-    setErrors(EMPTY_VALUES);
+      if (response.ok) {
+        setStatus({ tone: "info", text: "Message sent. You will get a reply by email." });
+        setValues(EMPTY_VALUES);
+        setErrors(EMPTY_VALUES);
+        return;
+      }
+
+      // No mail service configured yet: hand the message to the visitor's own
+      // client rather than dropping it.
+      if (response.status === 503) {
+        openMailClient();
+        return;
+      }
+
+      if (response.status === 400) {
+        const data: { errors?: Partial<Record<ContactFieldName, string>> } = await response
+          .json()
+          .catch(() => ({}));
+        if (data.errors) {
+          setErrors({ ...EMPTY_VALUES, ...data.errors });
+        }
+        setStatus({ tone: "error", text: "Please review the highlighted fields." });
+        return;
+      }
+
+      setStatus({
+        tone: "error",
+        text: `The message could not be sent. Write to ${CONTACT_EMAIL} instead.`,
+      });
+    } catch {
+      // Offline or the request never landed -- the mail client still works.
+      openMailClient();
+    } finally {
+      setIsSending(false);
+    }
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="rounded-2xl border border-border bg-surface p-7">
+    <form
+      onSubmit={handleSubmit}
+      noValidate
+      className="relative rounded-2xl border border-border bg-surface p-7"
+    >
       <div className="grid gap-4 sm:grid-cols-2">
         {TEXT_FIELDS.map((field) => (
           <div key={field.name} className="grid gap-1.5">
@@ -112,18 +165,38 @@ export function ContactForm() {
         </div>
       </div>
 
+      {/* Left for bots to fill in. Off-screen, unfocusable and hidden from
+          assistive technology, so nobody using the form ever meets it. */}
+      <div className="absolute -left-[9999px] top-0 h-px w-px overflow-hidden" aria-hidden="true">
+        <label htmlFor="company">Company</label>
+        <input
+          id="company"
+          name="company"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          value={honeypot}
+          onChange={(event) => setHoneypot(event.target.value)}
+        />
+      </div>
+
       <div className="mt-5 flex flex-wrap items-center gap-4">
         <motion.button
           type="submit"
-          whileHover={{ y: -2 }}
-          whileTap={{ scale: 0.97 }}
+          disabled={isSending}
+          whileHover={isSending ? undefined : { y: -2 }}
+          whileTap={isSending ? undefined : { scale: 0.97 }}
           transition={{ type: "spring", stiffness: 400, damping: 25 }}
-          className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-accent px-5 font-bold text-bg"
+          className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-accent px-5 font-bold text-bg disabled:cursor-not-allowed disabled:opacity-60"
         >
-          Send message
+          {isSending ? "Sending..." : "Send message"}
         </motion.button>
-        <p role="status" aria-live="polite" className="font-bold text-accent">
-          {status}
+        <p
+          role="status"
+          aria-live="polite"
+          className={`font-bold ${status?.tone === "error" ? "text-red-400" : "text-accent"}`}
+        >
+          {status?.text ?? ""}
         </p>
       </div>
     </form>
