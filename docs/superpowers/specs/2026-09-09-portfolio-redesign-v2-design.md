@@ -154,6 +154,25 @@ The site currently ships no screenshots at all. This redesign adds:
   reads as designed rather than as three empty boxes.
 - All images served through `next/image` with explicit dimensions.
 
+## Identity beyond the page
+
+A redesign that stops at the page leaves the visitor's first impression on the old
+system. Three surfaces carry the identity outside the layout and are rebuilt with it:
+
+**Open Graph card** (`app/opengraph-image.tsx`). Currently the coral design. Rebuilt in
+the steel palette with Big Shoulders as the headline face, so the preview that appears in
+LinkedIn, WhatsApp and email matches the site it opens. `ImageResponse` cannot use
+`next/font` the way the page does, so the two display faces are loaded as font files at
+the edge; if that proves unreliable the card falls back to a weight-and-scale composition
+in a system face rather than shipping a mismatched typeface.
+
+**Icon** (`app/icon.svg`). The `DR` monogram is redrawn in the new type and palette.
+
+**404 page** (`app/not-found.tsx`). Currently the Next.js default, which is the one screen
+on the site that says nothing about who built it. Gets the same grid, type and steel
+treatment, with a single route back to the cover. Static: no shader, no pinning, nothing
+that costs weight on a page nobody plans to visit.
+
 ## Motion system
 
 Durations and easings live in `lib/motion.ts` so the whole site moves with one hand.
@@ -208,6 +227,8 @@ lib/smoothScroll.ts    Lenis setup, wired to ScrollTrigger
 
 Sections rewritten: `Cover`, `PulseFeature`, `Work`, `HowIWork`, `Track`, `Contact`.
 
+Also rebuilt: `app/opengraph-image.tsx`, `app/icon.svg`, and a new `app/not-found.tsx`.
+
 Kept untouched: `data/*.ts`, `ContactForm`, `app/api/contact`, `lib/site.ts`,
 `lib/contactMessage.ts`, `lib/validateContactField.ts`, `app/robots.ts`, `app/sitemap.ts`,
 the 13 existing tests.
@@ -261,12 +282,19 @@ Focus states are visible and use `steel`, not the removal of an outline. The mag
 cursor never replaces a real focus ring. All interactive elements remain reachable by
 keyboard, including the project index on the cover.
 
+The pinned section needs explicit handling, because a naive implementation traps keyboard
+users: tabbing moves focus to an element the pin is holding off-screen, and the page
+appears frozen. Focus entering any beat scrolls the timeline to that beat rather than the
+browser scrolling inside a pinned container, and every beat's content stays in the tab
+order in reading order. This is correctness, not polish.
+
 ## Verification
 
 - `npm run lint`, `npm test`, `npm run build` after each slice.
 - Bundle size measured from the build output and compared against the 242 KB baseline.
 - Manual checks of the `prefers-reduced-motion` path, the `pointer: coarse` path, and the
   page with JavaScript disabled.
+- The 404 and the Open Graph card are checked as rendered output, not just as code.
 - Existing tests must stay green; new pure logic (scramble, count-up stepping, motion
   helpers) gets unit tests. Animation itself is verified by eye, not by test.
 
