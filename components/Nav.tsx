@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { GITHUB_URL, LINKEDIN_URL } from "@/lib/site";
 
 const NAV_LINKS = [
   { href: "#home", label: "Home" },
@@ -12,8 +13,6 @@ const NAV_LINKS = [
   { href: "#skills", label: "Skills" },
   { href: "#contact", label: "Contact" },
 ];
-
-const LINKEDIN_URL = "https://www.linkedin.com/in/daniel-rodriguez-b795a8406/";
 
 export function Nav() {
   const [activeHref, setActiveHref] = useState("#home");
@@ -41,6 +40,18 @@ export function Nav() {
 
   useEffect(() => {
     document.body.classList.toggle("overflow-hidden", isMenuOpen);
+    if (!isMenuOpen) return;
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setIsMenuOpen(false);
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      // Leaving the page with the drawer open would otherwise strand the lock.
+      document.body.classList.remove("overflow-hidden");
+    };
   }, [isMenuOpen]);
 
   return (
@@ -82,6 +93,17 @@ export function Nav() {
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
+          <a
+            href={GITHUB_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Daniel Rodriguez on GitHub"
+            className="grid h-11 w-11 place-items-center rounded-md border border-border text-muted transition-colors hover:border-accent/40 hover:text-accent"
+          >
+            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
+              <path d="M12 .5a12 12 0 0 0-3.79 23.4c.6.1.82-.26.82-.58v-2.2c-3.34.72-4.04-1.6-4.04-1.6-.55-1.4-1.34-1.77-1.34-1.77-1.1-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.84 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.8 5.63-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.21.69.82.57A12 12 0 0 0 12 .5z" />
+            </svg>
+          </a>
           <a
             href={LINKEDIN_URL}
             target="_blank"
@@ -147,6 +169,14 @@ export function Nav() {
             ))}
           </ul>
           <div className="mt-3 flex gap-2 border-t border-border pt-3">
+            <a
+              href={GITHUB_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex h-11 flex-1 items-center justify-center rounded-md border border-border text-sm font-semibold text-muted"
+            >
+              GitHub
+            </a>
             <a
               href={LINKEDIN_URL}
               target="_blank"

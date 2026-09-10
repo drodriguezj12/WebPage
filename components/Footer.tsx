@@ -1,3 +1,5 @@
+import { GITHUB_URL, LINKEDIN_URL } from "@/lib/site";
+
 export function Footer() {
   return (
     <footer className="border-t border-border bg-surface py-8 text-sm text-muted">
@@ -5,7 +7,15 @@ export function Footer() {
         <span>&copy; {new Date().getFullYear()} Daniel Rodriguez. Full-Stack Developer.</span>
         <div className="flex items-center gap-5">
           <a
-            href="https://www.linkedin.com/in/daniel-rodriguez-b795a8406/"
+            href={GITHUB_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-bold text-text hover:text-accent"
+          >
+            GitHub
+          </a>
+          <a
+            href={LINKEDIN_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="font-bold text-text hover:text-accent"
