@@ -33,15 +33,22 @@ export function SplitText({
 
     const ctx = gsap.context(() => {
       const inner = el.querySelectorAll<HTMLElement>("[data-line-inner]");
-      gsap.set(inner, { yPercent: 110 });
-      gsap.to(inner, {
-        yPercent: 0,
-        duration: DURATION.section,
-        ease: EASE.out,
-        delay,
-        stagger: stagger(inner.length, 0.35),
-        scrollTrigger: { trigger: el, start: "top 85%", once: true },
-      });
+      try {
+        gsap.set(inner, { yPercent: 110 });
+        gsap.to(inner, {
+          yPercent: 0,
+          duration: DURATION.section,
+          ease: EASE.out,
+          delay,
+          stagger: stagger(inner.length, 0.35),
+          scrollTrigger: { trigger: el, start: "top 85%", once: true },
+        });
+      } catch (error) {
+        // A headline that never animates is a flaw; one that stays hidden behind
+        // its mask is a broken page. Visible always wins.
+        gsap.set(inner, { yPercent: 0 });
+        console.error("SplitText reveal failed; showing the headline unanimated.", error);
+      }
     }, el);
 
     return () => ctx.revert();
