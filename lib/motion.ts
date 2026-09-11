@@ -10,7 +10,7 @@ export const DURATION = {
   follow: 0.3,
   /** A single element entering or leaving. */
   element: 0.6,
-  /** Section-scale movement: wipes, pinned beats. */
+  /** Section-scale movement: pinned beats. */
   section: 0.8,
 } as const;
 

@@ -152,11 +152,14 @@ developer".
 
 The site currently ships no screenshots at all. This redesign adds:
 
-- Pulse: the four screenshots and `realtime.gif` already committed to
-  `drodriguezj12/pulse-social-network` under `docs/screenshots/`.
+- Pulse: three of the screenshots committed to `drodriguezj12/pulse-social-network`
+  under `docs/screenshots/` (feed, create post, profile — not login), optimised to WebP
+  and shown beside the description in the feature's first beat. `realtime.gif` is not
+  shipped: at 2.6 MB it would outweigh the rest of the section's images combined for
+  something the demo video already shows, in motion, for less.
 - The other three projects: generated abstract covers in the steel palette, so the grid
   reads as designed rather than as three empty boxes.
-- All images served through `next/image` with explicit dimensions.
+- All images served through `next/image` with explicit dimensions, lazy by default.
 
 ## Identity beyond the page
 
@@ -170,12 +173,19 @@ LinkedIn, WhatsApp and email matches the site it opens. `ImageResponse` cannot u
 the edge; if that proves unreliable the card falls back to a weight-and-scale composition
 in a system face rather than shipping a mismatched typeface.
 
-**Icon** (`app/icon.svg`). The `DR` monogram is redrawn in the new type and palette.
+**Icon** (`app/icon.tsx`). The `DR` monogram is redrawn in the new type and palette. An
+SVG favicon cannot load a web font, so a literal `icon.svg` redraw could only set the
+mark in a system font — shipped instead as an `ImageResponse` route, loading the same
+Big Shoulders file `opengraph-image.tsx` does, generated once at build time (static, not
+per-request).
 
 **404 page** (`app/not-found.tsx`). Currently the Next.js default, which is the one screen
 on the site that says nothing about who built it. Gets the same grid, type and steel
 treatment, with a single route back to the cover. Static: no shader, no pinning, nothing
-that costs weight on a page nobody plans to visit.
+that costs weight on a page nobody plans to visit. It does still inherit the root
+layout's `MagneticCursor`, so GSAP loads there too — accepted, since it is the same chunk
+already cached from the home page for anyone who reaches a 404 by following a broken
+link from it.
 
 ## Motion system
 
@@ -186,21 +196,21 @@ cubic-bezier with a slow exit.
 | Element | Behaviour |
 |---|---|
 | Background | WebGL shader field (OGL), slow drift, reacting to the pointer. Capped pixel ratio, 30fps, paused off-screen, loaded after first paint |
-| Cover headline | Revealed line by line behind a mask — the text rises from behind an invisible edge, not a fade |
+| Cover headline and index | Revealed line by line behind a mask, but as pure CSS (`@keyframes` driven by inline `animation-delay` steps), not the GSAP `SplitText`/`Stagger` primitives used everywhere else. The page's first screen must be visible from first paint, run once with no JavaScript, and can never be hidden-then-replayed by hydration racing the reveal — a risk a GSAP `set`-to-hidden setup carries and a CSS animation, active from the stylesheet before any script runs, does not |
 | Mono labels | Short character scramble before settling |
 | Header | Collapses on scroll into a thin bar showing the active section number and name |
 | Pulse section | Pinned while its three beats advance with the scroll |
 | Figures | `3+`, `30%`, `95` count up on entry |
-| Project cards | Enter in sequence; subtle displacement on hover |
-| Cursor | Magnetic: grows and pulls toward interactive elements |
-| Section changes | Soft wipe, 600–800ms |
+| Project cards | Enter in sequence; lifts (translate, not the entry transform) on hover |
+| Cursor | Magnetic ring that grows and pulls toward interactive elements, layered on top of — not replacing — the native pointer. Hiding the OS cursor centrally sounds cleaner, but every link, button and input brings its own cursor back regardless, so the visitor saw two; the native pointer also carries precision and the text I-beam a custom ring cannot |
+| Section changes | Dropped. The pinned beats and the per-section reveals already carry the transitions between sections; a global wipe on top of them would double the movement at every boundary for no added clarity |
 
 ### Guardrails
 
 These are requirements, not preferences:
 
-- `prefers-reduced-motion: reduce` disables the shader, the pin, the scramble, the wipe
-  and the count-up. The site stays complete and readable.
+- `prefers-reduced-motion: reduce` disables the shader, the pin, the scramble and the
+  count-up. The site stays complete and readable.
 - `pointer: coarse` disables the shader and the magnetic cursor. Phones get the typography
   and the reveals, not the parts that cost battery.
 - Nothing hijacks scrolling. Pinned sections advance with the scroll and release it.
@@ -231,7 +241,8 @@ lib/smoothScroll.ts    Lenis setup, wired to ScrollTrigger
 
 Sections rewritten: `Cover`, `PulseFeature`, `Work`, `HowIWork`, `Track`, `Contact`.
 
-Also rebuilt: `app/opengraph-image.tsx`, `app/icon.svg`, and a new `app/not-found.tsx`.
+Also rebuilt: `app/opengraph-image.tsx`, `app/icon.tsx` (generated, not a static SVG),
+and a new `app/not-found.tsx`.
 
 Kept untouched: `data/*.ts`, `ContactForm`, `app/api/contact`, `lib/site.ts`,
 `lib/contactMessage.ts`, `lib/validateContactField.ts`, `app/robots.ts`, `app/sitemap.ts`,
@@ -243,9 +254,11 @@ Removed: `RevealOnScroll`, `TechMarquee`, `CustomCursor`, `Hero`, `About`, `Port
 `VideoEmbed` and `ProjectCard` are restyled but keep their current behaviour, including
 click-to-play and the `repoUrl` link.
 
-`data/projects.ts` gains an optional `cover` field for the project imagery and an optional
-`discipline` field for the one-word label in the cover index. Both optional, so nothing
-breaks if a project lacks them.
+`data/projects.ts` gains an optional `cover` field for the project imagery, an optional
+`discipline` field for the one-word label in the cover index, and an optional
+`screenshots` array (`{ src, alt, label, width, height }`) for real product imagery in a
+pinned beat — used only by Pulse. All optional, so nothing breaks if a project lacks
+them.
 
 ## Performance
 
@@ -326,12 +339,16 @@ only on his approval.
 - **Pinned section reflow on load (accepted).** The server renders the Pulse beats
   stacked, because that is the only layout readable without JavaScript or under reduced
   motion. After hydration, visitors who allow motion get the overlapping pinned layout, so
-  the beats fold into one cell. The cover fills the first viewport, so on a normal visit
-  this finishes before anyone reaches the section; it is visible only on arrival through a
-  direct link to `#pulse`. The section's top edge does not move, and the pin spacer that
-  ScrollTrigger inserts at runtime would shift layout on such an arrival anyway, so
-  removing the fold would not remove the jump. Rejected alternative: an inline head script
-  plus CSS that pre-renders the pinned state, which needs a hydration-warning suppression
-  on `<html>` and duplicates animation state in CSS for a narrow case.
+  the beats fold into one cell. On arrival at `#pulse` itself the fold is harmless — the
+  section's top edge does not move, and its content stays fully visible before and after.
+  The real cost showed up one level down: ScrollTrigger inserts the pin's spacer *after*
+  the browser has already made its own anchor jump, so a deep link to any section after
+  Pulse (`#work`, `#approach`, `#track`, `#contact`) landed roughly two screens short of
+  its target, on the layout as it existed before the pin spacer pushed everything below
+  it down. Fixed by re-applying `location.hash` once the pin spacing exists — see
+  `lib/deepLinkHash.ts` and `components/motion/Pinned.tsx` for the exact trigger and
+  cutoff. Rejected alternative: an inline head script plus CSS that pre-renders the
+  pinned state, which needs a hydration-warning suppression on `<html>` and duplicates
+  animation state in CSS for a narrow case.
 - **Near-neutral palette reading as lifeless.** This is the risk the direction accepts.
   The counterweights are type scale, generous space, and the single `signal` accent.
