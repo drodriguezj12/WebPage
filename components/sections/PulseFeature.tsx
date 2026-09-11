@@ -21,6 +21,30 @@ export function PulseFeature() {
 
         <Pinned
           className="relative"
+          footer={
+            <div className="flex flex-wrap gap-4">
+              {pulse.repoUrl ? (
+                <a
+                  className="label border border-border px-5 py-4 hover:border-steel hover:text-steel focus-visible:text-steel focus-visible:border-steel focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-steel"
+                  href={pulse.repoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View code on GitHub
+                </a>
+              ) : null}
+              {pulse.demoUrl ? (
+                <a
+                  className="label border border-border px-5 py-4 hover:border-steel hover:text-steel focus-visible:text-steel focus-visible:border-steel focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-steel"
+                  href={pulse.demoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Watch the demo
+                </a>
+              ) : null}
+            </div>
+          }
           beats={[
             <div key="what" className="grid gap-8 lg:grid-cols-2 lg:items-center">
               <p className="max-w-[46ch] text-lg leading-relaxed text-muted">
@@ -53,29 +77,6 @@ export function PulseFeature() {
             </div>,
           ]}
         />
-
-        <div className="mt-16 flex flex-wrap gap-4">
-          {pulse.repoUrl ? (
-            <a
-              className="label border border-border px-5 py-4 hover:border-steel hover:text-steel focus-visible:text-steel focus-visible:border-steel focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-steel"
-              href={pulse.repoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              View code on GitHub
-            </a>
-          ) : null}
-          {pulse.demoUrl ? (
-            <a
-              className="label border border-border px-5 py-4 hover:border-steel hover:text-steel focus-visible:text-steel focus-visible:border-steel focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-steel"
-              href={pulse.demoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Watch the demo
-            </a>
-          ) : null}
-        </div>
       </div>
     </section>
   );

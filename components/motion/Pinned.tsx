@@ -20,9 +20,18 @@ import { scrollToY } from "@/lib/scrollControl";
 export function Pinned({
   beats,
   className = "",
+  footer,
 }: {
   beats: ReactNode[];
   className?: string;
+  /**
+   * Rendered inside the stage after the beats, in both the animated stage
+   * and the stacked fallback — never overlapped by the beat-swap animation.
+   * Keeping it inside the pinned box (rather than after `<Pinned>`) means it
+   * scrolls in with whichever beat is active and leaves no gap once the pin
+   * releases.
+   */
+  footer?: ReactNode;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const { animate } = useMotionAllowed();
@@ -120,17 +129,34 @@ export function Pinned({
     };
   }, [animate]);
 
-  const containerClassName = [animate ? "grid" : "flex flex-col gap-16", className]
+  // While animating, the stage fills the viewport (min-h-svh) and clears the
+  // collapsed header (pt-12 = 3rem) so the active beat never renders
+  // partially underneath it; the beats-wrapper grows to fill what's left
+  // (flex-1) and centres the beat group inside that space. The stacked
+  // fallback keeps today's plain flow — no viewport-height stage.
+  const containerClassName = [
+    "flex flex-col gap-16",
+    animate ? "min-h-svh pt-12" : "",
+    className,
+  ]
     .filter(Boolean)
     .join(" ");
 
+  // display:contents in the stacked fallback makes this wrapper invisible to
+  // layout, so each beat becomes a direct flex item sharing the container's
+  // own gap-16 — identical spacing to before footer existed.
+  const beatsWrapperClassName = animate ? "grid flex-1 place-content-center" : "contents";
+
   return (
     <div ref={ref} className={containerClassName}>
-      {beats.map((beat, index) => (
-        <div key={index} data-beat className={animate ? "[grid-area:1/1]" : ""}>
-          {beat}
-        </div>
-      ))}
+      <div className={beatsWrapperClassName}>
+        {beats.map((beat, index) => (
+          <div key={index} data-beat className={animate ? "[grid-area:1/1]" : ""}>
+            {beat}
+          </div>
+        ))}
+      </div>
+      {footer}
     </div>
   );
 }
