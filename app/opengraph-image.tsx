@@ -7,7 +7,7 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default async function OpenGraphImage() {
-  // Font loading, process.cwd() is the Next.js project directory.
+  // Load the font from disk; process.cwd() resolves to the project root at build time.
   const bigShouldersBold = await readFile(
     join(
       process.cwd(),
@@ -26,7 +26,9 @@ export default async function OpenGraphImage() {
           justifyContent: "space-between",
           backgroundColor: "#08080a",
           padding: "80px",
-          fontFamily: "sans-serif",
+          // Satori has no system fonts: with a single registered font it renders
+          // every text node in it. Declaring it here says what actually renders.
+          fontFamily: "Big Shoulders",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
