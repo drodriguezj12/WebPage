@@ -48,7 +48,7 @@ export default async function OpenGraphImage() {
           >
             DR
           </div>
-          <div style={{ color: "#a1a1aa", fontSize: "26px", fontWeight: 600 }}>
+          <div style={{ color: "#86868f", fontSize: "26px", fontWeight: 600 }}>
             Daniel Rodriguez
           </div>
         </div>
