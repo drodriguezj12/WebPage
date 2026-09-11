@@ -21,6 +21,16 @@ export const EASE = {
 } as const;
 
 /**
+ * CSS equivalents of `EASE`, for the handful of reveals that must run as
+ * plain `@keyframes` (no JavaScript, so no GSAP easing string) — the Cover's
+ * first-screen reveal, which has to be visible from first paint. `out` below
+ * is the standard cubic-bezier approximation of GSAP's `power3.out`.
+ */
+export const CSS_EASE = {
+  out: "cubic-bezier(0.215, 0.61, 0.355, 1)",
+} as const;
+
+/**
  * Step between siblings so a group of any size finishes in `total` seconds.
  * A fixed per-item delay would make a twelve-item grid crawl.
  */

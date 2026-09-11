@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DURATION, EASE, stagger } from "./motion";
+import { CSS_EASE, DURATION, EASE, stagger } from "./motion";
 
 describe("motion tokens", () => {
   it("keeps section movement inside the 600-800ms band the spec fixes", () => {
@@ -24,5 +24,9 @@ describe("motion tokens", () => {
   it("never returns a negative or infinite step", () => {
     expect(stagger(0)).toBe(0);
     expect(stagger(1)).toBeGreaterThan(0);
+  });
+
+  it("exposes a CSS cubic-bezier equivalent of the GSAP out ease", () => {
+    expect(CSS_EASE.out).toMatch(/^cubic-bezier\(/);
   });
 });

@@ -57,6 +57,80 @@ body {
   overflow: hidden;
 }
 
+/*
+ * Cover reveal (I1/I2): pure CSS so the headline and the project index — the
+ * page's first screen — are visible from first paint, animate exactly once,
+ * and can never be hidden-then-replayed by client JavaScript. Duration,
+ * delay and easing are set inline per element from lib/motion.ts; only the
+ * keyframe shape and the reduced-motion opt-in live here.
+ */
+@keyframes cover-line-reveal {
+  from {
+    transform: translateY(110%);
+  }
+  to {
+    transform: translateY(0%);
+  }
+}
+
+@keyframes cover-item-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cover-reveal-line {
+    animation-name: cover-line-reveal;
+    animation-fill-mode: both;
+  }
+
+  .cover-reveal-item {
+    animation-name: cover-item-reveal;
+    animation-fill-mode: both;
+  }
+}
+
+/*
+ * Cover height-aware sizing (I1): the 130px xl headline is tuned for tall
+ * viewports. At common laptop/desktop heights it leaves the project index —
+ * the design's one concession to a recruiter skimming — below the first
+ * screen. Unlayered rules always outrank an `@layer` (Tailwind's utilities
+ * live in one), so these win over `text-[130px]` regardless of source order,
+ * and only match at desktop widths, where that utility is the active one.
+ */
+@media (min-width: 1280px) and (max-height: 900px) {
+  .cover-headline {
+    font-size: 108px;
+  }
+  .cover-shell {
+    gap: 2.5rem;
+  }
+}
+
+@media (min-width: 1280px) and (max-height: 864px) {
+  .cover-headline {
+    font-size: 98px;
+  }
+}
+
+@media (min-width: 1280px) and (max-height: 768px) {
+  .cover-headline {
+    font-size: 84px;
+  }
+  .cover-shell {
+    gap: 2rem;
+  }
+  .cover-section {
+    padding-top: 5.5rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
