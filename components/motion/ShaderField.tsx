@@ -48,13 +48,25 @@ export default function ShaderField({ className = "" }: { className?: string }) 
     // (resize, below), so rebind once with an explicit non-null type here.
     const mount: HTMLDivElement = maybeMount;
 
-    const renderer = new Renderer({
-      alpha: true,
-      antialias: false,
-      // A retina pixel ratio quadruples the fragment work for a background
-      // nobody is looking at directly.
-      dpr: Math.min(window.devicePixelRatio, 1.5),
-    });
+    // OGL's Renderer sets `gl.renderer = this` unconditionally, even when
+    // getContext returned null (hardware acceleration off, blocked GPU, a
+    // VM without WebGL) — so construction throws instead of failing softly.
+    // Nothing has touched the DOM yet at this point, so on failure there is
+    // nothing to clean up: render nothing and register no listeners/loops.
+    let renderer: Renderer;
+    try {
+      renderer = new Renderer({
+        alpha: true,
+        antialias: false,
+        // A retina pixel ratio quadruples the fragment work for a background
+        // nobody is looking at directly.
+        dpr: Math.min(window.devicePixelRatio, 1.5),
+      });
+      if (!renderer.gl) throw new Error("WebGL context unavailable");
+    } catch (error) {
+      console.error("ShaderField: WebGL renderer unavailable; skipping the background.", error);
+      return;
+    }
     const gl = renderer.gl;
     gl.canvas.setAttribute("aria-hidden", "true");
     gl.canvas.style.width = "100%";
