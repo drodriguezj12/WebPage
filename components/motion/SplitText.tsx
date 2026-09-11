@@ -55,7 +55,16 @@ export function SplitText({
       }
     }, el);
 
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      // revert() alone can leave the mask's hidden inline yPercent in place —
+      // e.g. reduced motion switching on mid-session, after this headline has
+      // already revealed. Clear only the animated property: `clearProps: "all"`
+      // would also strip the `display: block` these inner spans carry as a
+      // React inline style, which the mask layout depends on.
+      const inner = el.querySelectorAll<HTMLElement>("[data-line-inner]");
+      gsap.set(inner, { clearProps: "transform,translate,rotate,scale,opacity" });
+    };
   }, [animate, delay]);
 
   const children = lines.map((line, index) => (

@@ -193,6 +193,11 @@ export function Pinned({
       items.forEach((item) => {
         item.style.pointerEvents = "";
       });
+      // revert() alone can leave a beat's hidden inline opacity/transform in
+      // place — e.g. reduced motion switching on mid-session, after the pin
+      // already advanced past beat 0. Clear only what this effect ever
+      // touches, never "all".
+      gsap.set(items, { clearProps: "transform,translate,rotate,scale,opacity" });
       setSetupFailed(false);
     };
   }, [animate]);

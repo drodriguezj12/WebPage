@@ -60,7 +60,15 @@ export function Stagger({
       }
     }, el);
 
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      // revert() alone can leave the entry's hidden inline values in place —
+      // e.g. reduced motion switching on mid-session, after this group has
+      // already revealed — so clear exactly the properties this effect ever
+      // touches. Never "all": these children can carry other inline styles
+      // (a React-set `display`, for instance) that must survive.
+      gsap.set(el.children, { clearProps: "transform,translate,rotate,scale,opacity" });
+    };
   }, [animate, total]);
 
   return (
