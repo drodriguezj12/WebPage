@@ -15,7 +15,7 @@ export function ContactSection() {
       <div className="mx-auto w-full max-w-[1440px] px-6">
         <SectionHeader index="05" label="Contact" lines={["Let's", "talk"]} />
 
-        <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
+        <div className="grid gap-10 [&>*]:min-w-0 lg:grid-cols-[0.8fr_1.2fr]">
           <div>
             <p className="max-w-[40ch] text-base leading-relaxed text-muted">
               Based in Bogotá, Colombia. Open to full-stack and backend roles, API work and
