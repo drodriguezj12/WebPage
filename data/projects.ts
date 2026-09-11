@@ -47,6 +47,7 @@ export const projects: Project[] = [
     demoUrl: "https://youtu.be/gIswiIaDojU",
     shortName: "SmartPark",
     discipline: "EVENT-DRIVEN",
+    cover: "/projects/smartpark.jpg",
   },
   {
     title: "E-commerce Platform with AI Chatbot Integration",
@@ -63,6 +64,7 @@ export const projects: Project[] = [
     demoUrl: "https://youtu.be/-6_inzLlELU",
     shortName: "Commerce",
     discipline: "AI CHATBOT",
+    cover: "/projects/commerce.jpg",
   },
   {
     title: "Contract Data Processing System",
@@ -78,5 +80,6 @@ export const projects: Project[] = [
     tech: ["Spring Boot", "Angular", "PostgreSQL", "Oracle", "MongoDB", "Git"],
     shortName: "Contracts",
     discipline: "PRODUCTION",
+    cover: "/projects/contracts.jpg",
   },
 ];
