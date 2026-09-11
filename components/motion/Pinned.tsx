@@ -6,6 +6,12 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useMotionAllowed } from "@/lib/useReducedMotion";
 import { DURATION, EASE } from "@/lib/motion";
 import { scrollToY } from "@/lib/scrollControl";
+import {
+  hashTargetId,
+  initialHashReapplyState,
+  isHashReapplyDone,
+  shouldReapplyOnRefresh,
+} from "@/lib/deepLinkHash";
 
 /**
  * Holds a section in place while its beats advance with the scroll. Without
@@ -109,6 +115,54 @@ export function Pinned({
           item.addEventListener("focusin", handleFocusIn);
           removeListeners.push(() => item.removeEventListener("focusin", handleFocusIn));
         });
+
+        // Deep links to sections after Pulse (I4): the browser's own anchor
+        // jump ran against the server layout, before this pin existed above
+        // them. Re-apply the hash once ScrollTrigger has recalculated that
+        // spacing — see lib/deepLinkHash for exactly how long this keeps
+        // trying — until the visitor scrolls under their own power.
+        const targetId = hashTargetId(window.location.hash);
+        const targetEl = targetId ? document.getElementById(targetId) : null;
+        if (targetEl) {
+          const hashState = initialHashReapplyState();
+          hashState.pageLoaded = document.readyState === "complete";
+          const scrollIntentEvents = ["wheel", "touchstart", "keydown", "pointerdown"] as const;
+          let hashListenersRemoved = false;
+
+          // Mutually referencing consts, all declared before any of them can
+          // possibly run (they're only ever called later, from an event) —
+          // no temporal-dead-zone issue, and it keeps every function
+          // declaration at the top level `no-inner-declarations` wants.
+          const onScrollIntent = () => {
+            hashState.hasScrollIntent = true;
+            removeHashListeners();
+          };
+
+          const onLoad = () => {
+            hashState.pageLoaded = true;
+          };
+
+          const onRefresh = () => {
+            if (!shouldReapplyOnRefresh(hashState)) return;
+            targetEl.scrollIntoView({ block: "start" });
+            if (hashState.pageLoaded) hashState.refreshesAfterLoad += 1;
+            if (isHashReapplyDone(hashState)) removeHashListeners();
+          };
+
+          const removeHashListeners = () => {
+            if (hashListenersRemoved) return;
+            hashListenersRemoved = true;
+            scrollIntentEvents.forEach((type) => window.removeEventListener(type, onScrollIntent));
+            window.removeEventListener("load", onLoad);
+            ScrollTrigger.removeEventListener("refresh", onRefresh);
+          };
+
+          scrollIntentEvents.forEach((type) => window.addEventListener(type, onScrollIntent, { passive: true }));
+          if (!hashState.pageLoaded) window.addEventListener("load", onLoad, { once: true });
+          ScrollTrigger.addEventListener("refresh", onRefresh);
+
+          removeListeners.push(removeHashListeners);
+        }
       } catch (error) {
         // A pinned section that fails must still be readable: every beat
         // visible, in place, and clickable — the same stacked layout the
