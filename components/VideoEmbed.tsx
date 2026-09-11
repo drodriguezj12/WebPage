@@ -9,21 +9,32 @@ function getYouTubeId(url: string): string | null {
 
 export function VideoEmbed({ url, title }: { url: string; title: string }) {
   const [isPlaying, setIsPlaying] = useState(false);
+  // A click event's `detail` is the mouse click count, which the browser
+  // sets to 0 for a "click" it synthesizes from the keyboard (Enter/Space on
+  // a button). That is the one signal available in a click handler to tell
+  // the two activations apart without listening for keydown separately.
+  const [keyboardActivated, setKeyboardActivated] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const videoId = getYouTubeId(url);
 
   // The play button unmounts the instant the iframe takes its place, so
   // without this, keyboard focus falls back to <body> and a keyboard user
-  // loses their place on the page entirely.
+  // loses their place on the page entirely. A mouse click already left focus
+  // exactly where the visitor put it, so only move it — and only show the
+  // ring the move needs — when the play was itself a keyboard activation.
   useEffect(() => {
-    if (isPlaying) iframeRef.current?.focus();
-  }, [isPlaying]);
+    if (isPlaying && keyboardActivated) iframeRef.current?.focus();
+  }, [isPlaying, keyboardActivated]);
 
   if (!videoId) return null;
 
   if (isPlaying) {
     return (
-      <div className="relative mt-3 aspect-video overflow-hidden border border-border">
+      <div
+        className={`relative mt-3 aspect-video overflow-hidden border border-border ${
+          keyboardActivated ? "focus-within:outline-2 focus-within:outline-offset-4 focus-within:outline-steel" : ""
+        }`}
+      >
         <iframe
           ref={iframeRef}
           src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
@@ -39,7 +50,10 @@ export function VideoEmbed({ url, title }: { url: string; title: string }) {
   return (
     <button
       type="button"
-      onClick={() => setIsPlaying(true)}
+      onClick={(event) => {
+        setKeyboardActivated(event.detail === 0);
+        setIsPlaying(true);
+      }}
       aria-label={`Play ${title} demo video`}
       className="group relative mt-3 block aspect-video w-full overflow-hidden border border-border focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-steel"
     >
