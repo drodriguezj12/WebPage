@@ -42,7 +42,7 @@ export const projects: Project[] = [
     screenshots: [
       {
         src: "/projects/pulse/feed.webp",
-        alt: "The live Pulse feed showing a post updating with a new like, with no page reload",
+        alt: "The Pulse feed showing a post with an image attachment and its like count",
         label: "FEED",
         width: 1600,
         height: 825,

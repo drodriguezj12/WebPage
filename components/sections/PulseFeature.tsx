@@ -70,7 +70,7 @@ export function PulseFeature() {
                         alt={pulse.screenshots[0].alt}
                         width={pulse.screenshots[0].width}
                         height={pulse.screenshots[0].height}
-                        sizes="(min-width: 1024px) 640px, 100vw"
+                        sizes="(min-width: 1440px) 680px, (min-width: 1024px) calc(50vw - 40px), 100vw"
                         loading="lazy"
                         className="h-auto w-full"
                       />
