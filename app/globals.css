@@ -18,6 +18,11 @@
 html {
   /* Lenis drives scrolling; native smooth scrolling fights it. */
   scroll-behavior: auto;
+  /* Clears the 48px collapsed header for anchor jumps and focus-driven
+     scrolling alike (scroll-padding applies to any scroll into view, not
+     just fragment navigation, unlike the per-section scroll-margin it
+     replaces). */
+  scroll-padding-top: 3.5rem;
 }
 
 body {
@@ -139,9 +144,4 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-}
-
-/* Anchor jumps land below the fixed header instead of underneath it. */
-section[id] {
-  scroll-margin-top: 5rem;
 }
