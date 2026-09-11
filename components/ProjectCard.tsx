@@ -4,7 +4,7 @@ import { VideoEmbed } from "./VideoEmbed";
 
 export function ProjectCard({ project }: { project: Project }) {
   return (
-    <article className="group flex h-full flex-col border border-border bg-surface p-8 transition-colors hover:border-steel/40">
+    <article className="flex h-full flex-col border border-border bg-surface p-8 transition-[translate,border-color] duration-[240ms] ease-out hover:border-steel/40 motion-safe:hover:-translate-y-1">
       <div className="mb-6 flex items-start justify-between gap-6">
         <h3 className="display text-[28px]">{project.title}</h3>
         <span className="label whitespace-nowrap">{project.discipline ?? project.tag}</span>
