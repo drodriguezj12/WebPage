@@ -66,7 +66,7 @@ export function PulseFeature() {
             </div>,
 
             <div key="decisions" className="grid gap-8 md:grid-cols-3">
-              {pulse.achievements.slice(0, 3).map((achievement, index) => (
+              {pulse.achievements.slice(1, 4).map((achievement, index) => (
                 <div key={achievement}>
                   <span className="label block">
                     {String(index + 1).padStart(2, "0")}
