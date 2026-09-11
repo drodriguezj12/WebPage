@@ -66,3 +66,8 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Anchor jumps land below the fixed header instead of underneath it. */
+section[id] {
+  scroll-margin-top: 5rem;
+}
