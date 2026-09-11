@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function getYouTubeId(url: string): string | null {
   const match = url.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=)([\w-]{11})/);
@@ -9,7 +9,15 @@ function getYouTubeId(url: string): string | null {
 
 export function VideoEmbed({ url, title }: { url: string; title: string }) {
   const [isPlaying, setIsPlaying] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const videoId = getYouTubeId(url);
+
+  // The play button unmounts the instant the iframe takes its place, so
+  // without this, keyboard focus falls back to <body> and a keyboard user
+  // loses their place on the page entirely.
+  useEffect(() => {
+    if (isPlaying) iframeRef.current?.focus();
+  }, [isPlaying]);
 
   if (!videoId) return null;
 
@@ -17,6 +25,7 @@ export function VideoEmbed({ url, title }: { url: string; title: string }) {
     return (
       <div className="relative mt-3 aspect-video overflow-hidden border border-border">
         <iframe
+          ref={iframeRef}
           src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
           title={`${title} demo video`}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -39,6 +48,8 @@ export function VideoEmbed({ url, title }: { url: string; title: string }) {
         src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
         alt=""
         aria-hidden="true"
+        loading="lazy"
+        decoding="async"
         className="h-full w-full object-cover"
       />
       <span className="absolute inset-0 flex items-center justify-center bg-bg/40 transition-colors group-hover:bg-bg/20">
