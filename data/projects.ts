@@ -12,6 +12,14 @@ export type Project = {
   discipline?: string;
   /** Path under /public for the card image. */
   cover?: string;
+  /** Real product screenshots shown beside the description in a pinned beat. */
+  screenshots?: {
+    src: string;
+    alt: string;
+    label: string;
+    width: number;
+    height: number;
+  }[];
 };
 
 export const projects: Project[] = [
@@ -31,6 +39,29 @@ export const projects: Project[] = [
     repoUrl: "https://github.com/drodriguezj12/pulse-social-network",
     shortName: "Pulse",
     discipline: "REAL-TIME",
+    screenshots: [
+      {
+        src: "/projects/pulse/feed.webp",
+        alt: "The live Pulse feed showing a post updating with a new like, with no page reload",
+        label: "FEED",
+        width: 1600,
+        height: 825,
+      },
+      {
+        src: "/projects/pulse/create-post.webp",
+        alt: "Composing a new post with an image attached before publishing",
+        label: "CREATE",
+        width: 1600,
+        height: 825,
+      },
+      {
+        src: "/projects/pulse/profile.webp",
+        alt: "A user profile page showing the account alias and avatar",
+        label: "PROFILE",
+        width: 1600,
+        height: 825,
+      },
+    ],
   },
   {
     title: "Smart Parking Management Platform",

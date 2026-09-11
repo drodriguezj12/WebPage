@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { projects } from "@/data/projects";
 import { SectionHeader } from "@/components/SectionHeader";
 import { Pinned } from "@/components/motion/Pinned";
@@ -47,16 +48,55 @@ export function PulseFeature() {
           }
           beats={[
             <div key="what" className="grid gap-8 lg:grid-cols-2 lg:items-center">
-              <p className="max-w-[46ch] text-lg leading-relaxed text-muted">
-                {pulse.description}
-              </p>
-              <ul className="flex flex-wrap gap-2">
-                {pulse.tech.map((tech) => (
-                  <li key={tech} className="label border border-border px-3 py-2">
-                    {tech}
-                  </li>
-                ))}
-              </ul>
+              <div>
+                <p className="max-w-[46ch] text-lg leading-relaxed text-muted">
+                  {pulse.description}
+                </p>
+                <ul className="mt-6 flex flex-wrap gap-2">
+                  {pulse.tech.map((tech) => (
+                    <li key={tech} className="label border border-border px-3 py-2">
+                      {tech}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {pulse.screenshots ? (
+                <div className="grid grid-cols-2 gap-3">
+                  <figure className="col-span-2">
+                    <div className="border border-border">
+                      <Image
+                        src={pulse.screenshots[0].src}
+                        alt={pulse.screenshots[0].alt}
+                        width={pulse.screenshots[0].width}
+                        height={pulse.screenshots[0].height}
+                        sizes="(min-width: 1024px) 640px, 100vw"
+                        loading="lazy"
+                        className="h-auto w-full"
+                      />
+                    </div>
+                    <figcaption className="label mt-2 block">
+                      {pulse.screenshots[0].label}
+                    </figcaption>
+                  </figure>
+                  {pulse.screenshots.slice(1).map((shot) => (
+                    <figure key={shot.src} className="hidden lg:block">
+                      <div className="border border-border">
+                        <Image
+                          src={shot.src}
+                          alt={shot.alt}
+                          width={shot.width}
+                          height={shot.height}
+                          sizes="304px"
+                          loading="lazy"
+                          className="h-auto w-full"
+                        />
+                      </div>
+                      <figcaption className="label mt-2 block">{shot.label}</figcaption>
+                    </figure>
+                  ))}
+                </div>
+              ) : null}
             </div>,
 
             <div key="demo" className="mx-auto w-full max-w-3xl">
