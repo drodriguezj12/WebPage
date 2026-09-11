@@ -167,6 +167,11 @@ export function Pinned({
         // A pinned section that fails must still be readable: every beat
         // visible, in place, and clickable — the same stacked layout the
         // no-motion path already uses, not beats piled into one grid cell.
+        // A throw partway through setup can leave a tween already running
+        // against these targets (e.g. the timeline built before the failure);
+        // left alive, its next tick re-applies the hidden values on top of
+        // the `set` below. Kill it first so this restore is the last word.
+        gsap.killTweensOf(items);
         gsap.set(items, { opacity: 1, y: 0 });
         items.forEach((item) => {
           item.style.pointerEvents = "auto";

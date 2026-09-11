@@ -45,7 +45,11 @@ export function SplitText({
         });
       } catch (error) {
         // A headline that never animates is a flaw; one that stays hidden behind
-        // its mask is a broken page. Visible always wins.
+        // its mask is a broken page. Visible always wins — but a throw inside
+        // the `gsap.to` call above can leave that tween half-built and still
+        // running, and its next tick would reapply the hidden `yPercent` over
+        // this restore. Kill it first.
+        gsap.killTweensOf(inner);
         gsap.set(inner, { yPercent: 0 });
         console.error("SplitText reveal failed; showing the headline unanimated.", error);
       }

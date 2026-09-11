@@ -50,7 +50,11 @@ export function Stagger({
         });
       } catch (error) {
         // A sequence that never animates is a flaw; one that stays hidden
-        // is a broken page. Visible always wins.
+        // is a broken page. Visible always wins — but a throw inside the
+        // `gsap.to` call above can leave that tween half-built and still
+        // running, and its next tick would reapply the hidden values over
+        // this restore. Kill it first.
+        gsap.killTweensOf(items);
         gsap.set(items, { opacity: 1, y: 0, clearProps: "translate,rotate,scale" });
         console.error("Stagger reveal failed; showing items unanimated.", error);
       }
