@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useMotionAllowed } from "@/lib/useReducedMotion";
@@ -35,11 +35,17 @@ export function Pinned({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const { animate } = useMotionAllowed();
+  // Drives the overlapping-grid layout off, in React, when GSAP setup throws
+  // partway through — the grid-area classes are what make a failed setup
+  // pile every beat into the same cell, so only removing them (not just
+  // resetting opacity/pointer-events) leaves a readable page.
+  const [setupFailed, setSetupFailed] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
     if (!el || !animate) return;
 
+    setSetupFailed(false);
     gsap.registerPlugin(ScrollTrigger);
 
     // Read by the focusin handlers below; updated from ScrollTrigger's
@@ -105,11 +111,13 @@ export function Pinned({
         });
       } catch (error) {
         // A pinned section that fails must still be readable: every beat
-        // visible, in place, and clickable.
+        // visible, in place, and clickable — the same stacked layout the
+        // no-motion path already uses, not beats piled into one grid cell.
         gsap.set(items, { opacity: 1, y: 0 });
         items.forEach((item) => {
           item.style.pointerEvents = "auto";
         });
+        setSetupFailed(true);
         console.error("Pinned setup failed; showing beats unanimated.", error);
       }
     }, el);
@@ -126,8 +134,14 @@ export function Pinned({
       items.forEach((item) => {
         item.style.pointerEvents = "";
       });
+      setSetupFailed(false);
     };
   }, [animate]);
+
+  // A failed setup falls all the way back to the same stacked layout as
+  // no-motion — including skipping the viewport-height stage from I3, which
+  // exists to hold the pin's centred beat, not a plain flow of them.
+  const pinnedLayout = animate && !setupFailed;
 
   // While animating, the stage fills the viewport (min-h-svh) and clears the
   // collapsed header (pt-12 = 3rem) so the active beat never renders
@@ -136,7 +150,7 @@ export function Pinned({
   // fallback keeps today's plain flow — no viewport-height stage.
   const containerClassName = [
     "flex flex-col gap-16",
-    animate ? "min-h-svh pt-12" : "",
+    pinnedLayout ? "min-h-svh pt-12" : "",
     className,
   ]
     .filter(Boolean)
@@ -145,13 +159,13 @@ export function Pinned({
   // display:contents in the stacked fallback makes this wrapper invisible to
   // layout, so each beat becomes a direct flex item sharing the container's
   // own gap-16 — identical spacing to before footer existed.
-  const beatsWrapperClassName = animate ? "grid flex-1 place-content-center" : "contents";
+  const beatsWrapperClassName = pinnedLayout ? "grid flex-1 place-content-center" : "contents";
 
   return (
     <div ref={ref} className={containerClassName}>
       <div className={beatsWrapperClassName}>
         {beats.map((beat, index) => (
-          <div key={index} data-beat className={animate ? "[grid-area:1/1]" : ""}>
+          <div key={index} data-beat className={pinnedLayout ? "[grid-area:1/1]" : ""}>
             {beat}
           </div>
         ))}
