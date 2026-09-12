@@ -1,7 +1,13 @@
 /**
- * Every duration and curve on the site comes from here. One hand moves
- * everything, so nothing drifts out of rhythm as sections are added.
+ * Every scripted (GSAP-driven) animation on the site takes its duration and
+ * curve from here, so nothing drifts out of rhythm as sections are added.
  * Values are in seconds because GSAP takes seconds.
+ *
+ * A few plain CSS transitions (ProjectCard's hover lift, the header's
+ * collapse) mirror these same values by hand instead — a Tailwind
+ * `duration-*`/`ease-*` utility is a compile-time class name, not a runtime
+ * reference to a JS constant — and Lenis's own scroll glide is configured
+ * directly in `lib/smoothScroll.ts`.
  */
 export const DURATION = {
   /** Interface feedback: hover, press, focus. */

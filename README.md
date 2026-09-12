@@ -57,7 +57,10 @@ components/         shared components: SiteHeader, SiteFooter, ProjectCard, Vide
 data/               projects, skills and education — the content lives here
 lib/                motion tokens (lib/motion.ts), the reduced-motion/coarse-pointer
                     hook, scroll control, the deep-link hash fix for the pinned
-                    section, site URLs, and contact validation — all unit tested
+                    section, site URLs, contact validation, and the Lenis
+                    smooth-scroll setup — unit tested except the reduced-motion
+                    hook and smooth-scroll setup (thin wrappers over browser and
+                    Lenis APIs) and the site-URL constants
 ```
 
 To add a project, append an entry to `data/projects.ts`: `demoUrl` renders a
@@ -68,8 +71,13 @@ section. All four are optional.
 
 ## Motion
 
-Every duration and easing curve comes from `lib/motion.ts`, so the whole site moves
-with one hand. The guardrails are requirements, not preferences:
+Every scripted reveal — the pin, `SplitText`, `Stagger`, `ScrambleText`, `CountUp` —
+takes its duration and easing from `lib/motion.ts`, so that hand-off from JavaScript
+moves with one clock. A handful of plain CSS transitions (`ProjectCard`'s hover lift,
+the header's collapse) mirror those same values by hand rather than importing the
+tokens, since a Tailwind `duration-*`/`ease-*` utility can't reference a JS constant;
+Lenis's own scroll glide is configured directly in `lib/smoothScroll.ts`. The
+guardrails are requirements, not preferences:
 
 - `prefers-reduced-motion: reduce` turns off the shader, the pin, the scramble and the
   count-up. The site stays complete and readable, just still.

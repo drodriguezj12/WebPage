@@ -104,6 +104,13 @@ Display sizes: 130px at `xl`, 96px at `lg`, 68px at `md`, 44px at base. The cove
 carries explicit break points per breakpoint rather than relying on natural wrapping,
 because condensed type wraps badly at large sizes.
 
+The 130px `xl` size is additionally height-aware: at 1280px wide and up, it steps down
+to 108px under 900px of inner height, 98px under 864px, and 84px under 768px (with a
+matching reduction in the cover's own vertical gaps at the two ends of that range). A
+tall 130px headline on a common laptop viewport pushed the project index — the design's
+one concession to a recruiter skimming — below the first screen; shrinking the headline
+on short viewports keeps the index on it.
+
 ### Grid and space
 
 12 columns, 1440px maximum width, 24px gutter. Section rhythm on an 8px scale, with 160px
@@ -196,10 +203,10 @@ cubic-bezier with a slow exit.
 | Element | Behaviour |
 |---|---|
 | Background | WebGL shader field (OGL), slow drift, reacting to the pointer. Capped pixel ratio, 30fps, paused off-screen, loaded after first paint |
-| Cover headline and index | Revealed line by line behind a mask, but as pure CSS (`@keyframes` driven by inline `animation-delay` steps), not the GSAP `SplitText`/`Stagger` primitives used everywhere else. The page's first screen must be visible from first paint, run once with no JavaScript, and can never be hidden-then-replayed by hydration racing the reveal — a risk a GSAP `set`-to-hidden setup carries and a CSS animation, active from the stylesheet before any script runs, does not |
+| Cover headline and index | Pure CSS (`@keyframes` driven by inline `animation-delay` steps), not the GSAP `SplitText`/`Stagger` primitives used everywhere else. The headline's lines rise behind a mask, one at a time, mirroring `SplitText`; the index items below it just fade in and rise slightly, mirroring `Stagger`. The page's first screen must be visible from first paint, run once with no JavaScript, and can never be hidden-then-replayed by hydration racing the reveal — a risk a GSAP `set`-to-hidden setup carries and a CSS animation, active from the stylesheet before any script runs, does not |
 | Mono labels | Short character scramble before settling |
 | Header | Collapses on scroll into a thin bar showing the active section number and name |
-| Pulse section | Pinned while its three beats advance with the scroll |
+| Pulse section | Pinned while its three beats advance with the scroll. Height-aware: below common laptop viewport heights, the screenshots and the demo video shrink (and the two supporting screenshots, then the whole screenshot block on narrow-and-short mobile, drop) so the active beat and the CTA footer both stay fully on screen; a shorter beat is centred in the shared grid cell rather than sitting at its top. Keyboard focus that lands on a beat or the footer while it isn't fully visible — under the fixed header, or below the fold — jumps the pin to the right beat if that's the cause, and otherwise releases the pin and scrolls the element fully into view |
 | Figures | `3+`, `30%`, `95` count up on entry |
 | Project cards | Enter in sequence; lifts (translate, not the entry transform) on hover |
 | Cursor | Magnetic ring that grows and pulls toward interactive elements, layered on top of — not replacing — the native pointer. Hiding the OS cursor centrally sounds cleaner, but every link, button and input brings its own cursor back regardless, so the visitor saw two; the native pointer also carries precision and the text I-beam a custom ring cannot |
