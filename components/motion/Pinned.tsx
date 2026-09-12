@@ -100,21 +100,76 @@ export function Pinned({
 
         const trigger = timeline.scrollTrigger;
 
+        // General fallback, for any viewport: if whatever just received
+        // focus still isn't fully on screen — under the fixed header, or
+        // below the fold — release the pin and let the browser's own
+        // scrollIntoView finish the job. Beats get a first chance below to
+        // fix this the cheap way (jump the timeline to the right progress);
+        // the footer has no beat index to jump to, so this is its only path,
+        // and a beat whose own content still overflows after being made
+        // active falls through to it too.
+        // The fixed header is collapsed (48px, h-12) by the time any
+        // pinned section is reachable at all — a visitor is well past the
+        // 120px scroll-Y threshold that collapses it. Reading its *live*
+        // height here instead would be worse, not more robust: the collapse
+        // is React state set from a native "scroll" listener, so right after
+        // one of this effect's own Lenis-driven jumps it can still measure
+        // the pre-collapse 80px (h-20) for a frame or two, which would flag
+        // an already-visible element as hidden under the header.
+        const HEADER_HEIGHT = 48;
+        const ensureVisible = (target: HTMLElement) => {
+          if (!trigger) return;
+          const rect = target.getBoundingClientRect();
+          const fullyVisible = rect.top >= HEADER_HEIGHT - 0.5 && rect.bottom <= window.innerHeight + 0.5;
+          if (fullyVisible) return;
+          scrollToY(trigger.end);
+          requestAnimationFrame(() => {
+            target.scrollIntoView({ block: "nearest" });
+          });
+        };
+
         // Keyboard: focus entering a beat drives the timeline to that beat
         // instead of the browser scrolling inside a pinned container.
         items.forEach((item, index) => {
-          const handleFocusIn = () => {
+          const jumpToBeat = () => {
             // Already the visible beat: don't jump the scroll under a click
             // on a link that lives inside it.
-            if (index === activeIndex) return;
-            if (!trigger) return;
+            if (index === activeIndex || !trigger) return;
             const span = trigger.end - trigger.start;
-            const target = trigger.start + (span * index) / Math.max(1, items.length - 1);
-            scrollToY(target);
+            const dest = trigger.start + (span * index) / Math.max(1, items.length - 1);
+            scrollToY(dest);
+          };
+          const handleFocusIn = (event: FocusEvent) => {
+            jumpToBeat();
+            // The first time focus ever reaches this section it isn't pinned
+            // yet, so the browser treats the newly focused element as an
+            // ordinary off-screen node and scrolls it into view itself,
+            // racing the jump above. Re-assert the destination — reading
+            // `activeIndex` fresh, in case that native scroll already moved
+            // it — before checking whether the result is actually visible.
+            requestAnimationFrame(() => {
+              jumpToBeat();
+              requestAnimationFrame(() => ensureVisible(event.target as HTMLElement));
+            });
           };
           item.addEventListener("focusin", handleFocusIn);
           removeListeners.push(() => item.removeEventListener("focusin", handleFocusIn));
         });
+
+        // Footer: rendered after the beats, inside the same pinned stage,
+        // but outside the overlapping grid — it has no beat index, so the
+        // fallback above is the only way it can ever bring itself on screen.
+        // Read from the DOM (an extra child after the beats-wrapper) rather
+        // than closing over the `footer` prop: that keeps this effect keyed
+        // on `animate` alone, the same as the `beats` prop already is above.
+        const footerEl = el.children.length > 1 ? (el.lastElementChild as HTMLElement) : null;
+        if (footerEl) {
+          const handleFooterFocusIn = (event: FocusEvent) => {
+            requestAnimationFrame(() => ensureVisible(event.target as HTMLElement));
+          };
+          footerEl.addEventListener("focusin", handleFooterFocusIn);
+          removeListeners.push(() => footerEl.removeEventListener("focusin", handleFooterFocusIn));
+        }
 
         // Deep links to sections after Pulse (I4): the browser's own anchor
         // jump ran against the server layout, before this pin existed above
@@ -208,13 +263,24 @@ export function Pinned({
   const pinnedLayout = animate && !setupFailed;
 
   // While animating, the stage fills the viewport (min-h-svh) and clears the
-  // collapsed header (pt-12 = 3rem) so the active beat never renders
-  // partially underneath it; the beats-wrapper grows to fill what's left
-  // (flex-1) and centres the beat group inside that space. The stacked
-  // fallback keeps today's plain flow — no viewport-height stage.
+  // collapsed header plus a 16px gutter (pt-16 = 4rem: 48px header + 16px air)
+  // so the active beat never renders flush under it; pb-4 gives the footer
+  // the same 16px of air above the viewport's own bottom edge instead of
+  // sitting flush against it. The beats-wrapper grows to fill what's left
+  // (flex-1) and centres the beat group inside that space.
+  //
+  // That centering is what real in-browser viewports (screen minus browser
+  // chrome, routinely shorter than the CSS viewport a devtools size picker
+  // shows) can't afford: forcing the stage to fill min-h-svh gives flex-1
+  // extra space to distribute even once the beat's own content — plus the
+  // header clearance, the footer and the gaps between them — is already
+  // taller than what is left after the header. Below ~800px of inner height,
+  // drop the floor and let the stage size to exactly what its content needs;
+  // the composition above that stays the intentional, centred one. The
+  // stacked fallback keeps today's plain flow — no viewport-height stage.
   const containerClassName = [
     "flex flex-col gap-16",
-    pinnedLayout ? "min-h-svh pt-12" : "",
+    pinnedLayout ? "min-h-svh pt-16 pb-4 [@media(max-height:800px)]:!min-h-0" : "",
     className,
   ]
     .filter(Boolean)
@@ -226,10 +292,23 @@ export function Pinned({
   const beatsWrapperClassName = pinnedLayout ? "grid flex-1 place-content-center" : "contents";
 
   return (
-    <div ref={ref} className={containerClassName}>
+    // data-pinned lets a beat reach up to this state with a plain CSS
+    // ancestor selector — e.g. PulseFeature's own height-aware rules —
+    // without needing a client component (and its own copy of
+    // useMotionAllowed, plus whatever data it closes over) just to read
+    // this same flag.
+    <div ref={ref} data-pinned={pinnedLayout || undefined} className={containerClassName}>
       <div className={beatsWrapperClassName}>
         {beats.map((beat, index) => (
-          <div key={index} data-beat className={pinnedLayout ? "[grid-area:1/1]" : ""}>
+          <div
+            key={index}
+            data-beat
+            // self-center: every beat shares one grid cell sized to the
+            // tallest of them, and grid's default align-items: stretch
+            // otherwise leaves a shorter beat's content pinned to the top
+            // of that shared cell instead of centred in it.
+            className={pinnedLayout ? "[grid-area:1/1] self-center" : ""}
+          >
             {beat}
           </div>
         ))}

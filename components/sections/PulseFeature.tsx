@@ -62,7 +62,26 @@ export function PulseFeature() {
               </div>
 
               {pulse.screenshots ? (
-                <div className="grid grid-cols-2 gap-3">
+                <div
+                  // Real in-browser viewports (screen minus browser chrome)
+                  // can be shorter than this beat's natural height at any
+                  // width, most often on a laptop's own display — a phone
+                  // held short of its usual height doesn't have the column
+                  // width to keep the screenshots readable next to the copy
+                  // in the first place, so the whole block steps aside there.
+                  //
+                  // The height-aware rules for `pulse-*` below live in
+                  // globals.css, scoped to `[data-pinned] .pulse-*` — set by
+                  // Pinned itself only on its animated, pinned rendering, so
+                  // the reduced-motion/no-JS stacked fallback (no
+                  // one-screen budget to protect) renders exactly as it
+                  // always has. Plain hand-written CSS, not Tailwind's
+                  // arbitrary-variant syntax: stacking an arbitrary
+                  // ancestor-selector variant with an arbitrary media
+                  // variant silently dropped the height condition (or the
+                  // whole class) in this Tailwind version.
+                  className="pulse-screenshots grid grid-cols-2 gap-3"
+                >
                   <figure className="col-span-2">
                     <div className="border border-border">
                       <Image
@@ -72,7 +91,11 @@ export function PulseFeature() {
                         height={pulse.screenshots[0].height}
                         sizes="(min-width: 1440px) 680px, (min-width: 1024px) calc(50vw - 40px), 100vw"
                         loading="lazy"
-                        className="h-auto w-full"
+                        // Below ~800px of inner height the full-height hero
+                        // shot is what pushes the beat past the fold; capping
+                        // it (cropped to its top, where the feed content is)
+                        // buys back most of that without losing the image.
+                        className="pulse-hero-shot h-auto w-full"
                       />
                     </div>
                     <figcaption className="label mt-2 block">
@@ -80,7 +103,13 @@ export function PulseFeature() {
                     </figcaption>
                   </figure>
                   {pulse.screenshots.slice(1).map((shot) => (
-                    <figure key={shot.src} className="hidden lg:block">
+                    <figure
+                      key={shot.src}
+                      // The two supporting shots are the next thing to give
+                      // up: below ~700px of inner height, capping the hero
+                      // shot alone isn't enough to clear the fold.
+                      className="pulse-supporting-shot hidden lg:block"
+                    >
                       <div className="border border-border">
                         <Image
                           src={shot.src}
@@ -99,19 +128,30 @@ export function PulseFeature() {
               ) : null}
             </div>,
 
-            <div key="demo" className="mx-auto w-full max-w-3xl">
+            <div
+              key="demo"
+              // The video keeps a 16:9 ratio at whatever width this wrapper
+              // gives it, so its rendered height scales with max-w-3xl (768px
+              // wide -> 432px tall) — tall enough that it, not the screenshots
+              // beat, is what actually sizes the shared grid cell every beat
+              // sits in. Narrowing the cap on short viewports (pulse-demo-wrapper
+              // in globals.css) shrinks that cell along with it.
+              className="pulse-demo-wrapper mx-auto w-full max-w-3xl"
+            >
               {pulse.demoUrl ? (
                 <VideoEmbed url={pulse.demoUrl} title={pulse.title} />
               ) : null}
             </div>,
 
-            <div key="decisions" className="grid gap-8 md:grid-cols-3">
+            <div key="decisions" className="pulse-decisions grid gap-8 md:grid-cols-3">
               {pulse.achievements.slice(1, 4).map((achievement, index) => (
                 <div key={achievement}>
                   <span className="label block">
                     {String(index + 1).padStart(2, "0")}
                   </span>
-                  <p className="mt-4 text-base leading-relaxed text-muted">{achievement}</p>
+                  <p className="pulse-decision-text mt-4 text-base leading-relaxed text-muted">
+                    {achievement}
+                  </p>
                 </div>
               ))}
             </div>,

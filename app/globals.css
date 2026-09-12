@@ -174,6 +174,54 @@ html.lenis body {
   }
 }
 
+/*
+ * Pulse pinned-stage height-aware fit (I-fix1): a real in-browser viewport
+ * (screen minus browser chrome) is routinely shorter than the size a
+ * devtools picker shows, and this beat's full presentation doesn't fit a
+ * common laptop height alongside the CTA footer while pinned. Scoped to
+ * `[data-pinned]` — set by Pinned itself only on its animated, pinned
+ * rendering — so the reduced-motion/no-JS stacked fallback, which has no
+ * one-screen budget to protect, renders exactly as it always has.
+ *
+ * Plain hand-written rules rather than Tailwind's arbitrary-variant syntax:
+ * stacking an arbitrary ancestor-selector variant with an arbitrary media
+ * variant (`[[data-pinned]_&]:[@media(...)]:h-[220px]`, in either order, or
+ * combined into one `[@media(...){sel}]:` variant) silently failed to
+ * generate the media query in this Tailwind version — the ancestor selector
+ * came through but the height condition didn't, or the class didn't
+ * generate at all.
+ */
+@media (max-height: 800px) {
+  [data-pinned] .pulse-hero-shot {
+    height: 220px;
+    object-fit: cover;
+    object-position: top;
+  }
+  [data-pinned] .pulse-demo-wrapper {
+    max-width: var(--container-md);
+  }
+  [data-pinned] .pulse-decisions {
+    gap: 1rem;
+  }
+  [data-pinned] .pulse-decision-text {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.375;
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 700px) {
+  [data-pinned] .pulse-supporting-shot {
+    display: none;
+  }
+}
+
+@media (max-width: 1023px) and (max-height: 700px) {
+  [data-pinned] .pulse-screenshots {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
