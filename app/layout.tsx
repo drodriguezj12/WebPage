@@ -1,12 +1,25 @@
 import type { Metadata } from "next";
-import { Geist, Inter } from "next/font/google";
+import { Big_Shoulders, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { CustomCursor } from "@/components/CustomCursor";
-import { ScrollProgress } from "@/components/ScrollProgress";
+import { SmoothScrollProvider } from "@/components/motion/SmoothScrollProvider";
+import { MagneticCursor } from "@/components/motion/MagneticCursor";
 import { SITE_URL } from "@/lib/site";
 
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
+const display = Big_Shoulders({
+  variable: "--font-big-shoulders",
+  subsets: ["latin"],
+  weight: ["500", "700", "800"],
+  // Next cannot derive override metrics for this family, so it generates no
+  // adjusted fallback. These faces are condensed, which keeps the reflow small
+  // while the webfont loads.
+  fallback: ["Arial Narrow", "Helvetica Neue Condensed", "sans-serif"],
+});
+const sans = Inter({ variable: "--font-inter", subsets: ["latin"] });
+const mono = JetBrains_Mono({
+  variable: "--font-jetbrains",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -26,10 +39,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${inter.variable}`}>
+    <html lang="en" className={`${display.variable} ${sans.variable} ${mono.variable}`}>
       <body className="min-h-screen bg-bg font-sans text-text antialiased">
-        <ScrollProgress />
-        <CustomCursor />
+        <SmoothScrollProvider />
+        <MagneticCursor />
         {children}
       </body>
     </html>

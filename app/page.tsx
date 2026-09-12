@@ -1,27 +1,25 @@
-import { Nav } from "@/components/Nav";
-import { Hero } from "@/components/Hero";
-import { TechMarquee } from "@/components/TechMarquee";
-import { About } from "@/components/About";
-import { Portfolio } from "@/components/Portfolio";
-import { Education } from "@/components/Education";
-import { Skills } from "@/components/Skills";
-import { Contact } from "@/components/Contact";
-import { Footer } from "@/components/Footer";
+import { SiteFooter } from "@/components/SiteFooter";
+import { SiteHeader } from "@/components/SiteHeader";
+import { ContactSection } from "@/components/sections/ContactSection";
+import { Cover } from "@/components/sections/Cover";
+import { HowIWork } from "@/components/sections/HowIWork";
+import { PulseFeature } from "@/components/sections/PulseFeature";
+import { Track } from "@/components/sections/Track";
+import { Work } from "@/components/sections/Work";
 
 export default function Home() {
   return (
     <>
-      <Nav />
+      <SiteHeader />
       <main id="main">
-        <Hero />
-        <TechMarquee />
-        <About />
-        <Portfolio />
-        <Education />
-        <Skills />
-        <Contact />
+        <Cover />
+        <PulseFeature />
+        <Work />
+        <HowIWork />
+        <Track />
+        <ContactSection />
       </main>
-      <Footer />
+      <SiteFooter />
     </>
   );
 }

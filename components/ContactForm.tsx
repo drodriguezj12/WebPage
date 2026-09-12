@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { motion } from "framer-motion";
 import {
   CONTACT_FIELD_RULES,
   validateContactField,
@@ -122,7 +121,7 @@ export function ContactForm() {
     <form
       onSubmit={handleSubmit}
       noValidate
-      className="relative rounded-2xl border border-border bg-surface p-7"
+      className="relative border border-border bg-surface p-7"
     >
       <div className="grid gap-4 sm:grid-cols-2">
         {TEXT_FIELDS.map((field) => (
@@ -139,7 +138,7 @@ export function ContactForm() {
               onChange={(event) => handleChange(field.name, event.target.value)}
               onBlur={() => handleBlur(field.name)}
               aria-invalid={Boolean(errors[field.name])}
-              className="h-11 rounded-md border border-border bg-bg px-3 text-text outline-none focus:border-accent"
+              className="h-11 border border-border bg-bg px-3 text-text focus:border-steel focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-steel"
             />
             <span className="min-h-[18px] text-sm font-semibold text-red-400">
               {errors[field.name]}
@@ -159,7 +158,7 @@ export function ContactForm() {
             onChange={(event) => handleChange("message", event.target.value)}
             onBlur={() => handleBlur("message")}
             aria-invalid={Boolean(errors.message)}
-            className="min-h-[132px] resize-y rounded-md border border-border bg-bg px-3 py-2.5 text-text outline-none focus:border-accent"
+            className="min-h-[132px] resize-y border border-border bg-bg px-3 py-2.5 text-text focus:border-steel focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-steel"
           />
           <span className="min-h-[18px] text-sm font-semibold text-red-400">{errors.message}</span>
         </div>
@@ -181,20 +180,17 @@ export function ContactForm() {
       </div>
 
       <div className="mt-5 flex flex-wrap items-center gap-4">
-        <motion.button
+        <button
           type="submit"
           disabled={isSending}
-          whileHover={isSending ? undefined : { y: -2 }}
-          whileTap={isSending ? undefined : { scale: 0.97 }}
-          transition={{ type: "spring", stiffness: 400, damping: 25 }}
-          className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-accent px-5 font-bold text-bg disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex h-12 items-center justify-center gap-2 bg-steel px-5 font-bold text-bg motion-safe:transition-transform motion-safe:enabled:hover:-translate-y-0.5 motion-safe:enabled:active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-steel disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isSending ? "Sending..." : "Send message"}
-        </motion.button>
+        </button>
         <p
           role="status"
           aria-live="polite"
-          className={`font-bold ${status?.tone === "error" ? "text-red-400" : "text-accent"}`}
+          className={`font-bold ${status?.tone === "error" ? "text-red-400" : "text-steel"}`}
         >
           {status?.text ?? ""}
         </p>

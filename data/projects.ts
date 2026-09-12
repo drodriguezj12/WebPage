@@ -6,6 +6,20 @@ export type Project = {
   tech: string[];
   demoUrl?: string;
   repoUrl?: string;
+  /** Name for the cover index, where the full title does not fit. */
+  shortName?: string;
+  /** One word for the cover index. Uppercase, no punctuation. */
+  discipline?: string;
+  /** Path under /public for the card image. */
+  cover?: string;
+  /** Real product screenshots shown beside the description in a pinned beat. */
+  screenshots?: {
+    src: string;
+    alt: string;
+    label: string;
+    width: number;
+    height: number;
+  }[];
 };
 
 export const projects: Project[] = [
@@ -23,6 +37,31 @@ export const projects: Project[] = [
     tech: ["Java 21", "Spring Boot", "Angular 19", "PostgreSQL", "WebSocket", "Docker", "Testcontainers"],
     demoUrl: "https://youtu.be/POKikhqDtYo",
     repoUrl: "https://github.com/drodriguezj12/pulse-social-network",
+    shortName: "Pulse",
+    discipline: "REAL-TIME",
+    screenshots: [
+      {
+        src: "/projects/pulse/feed.webp",
+        alt: "The Pulse feed showing a post with an image attachment and its like count",
+        label: "FEED",
+        width: 1600,
+        height: 825,
+      },
+      {
+        src: "/projects/pulse/create-post.webp",
+        alt: "Composing a new post with an image attached before publishing",
+        label: "CREATE",
+        width: 1600,
+        height: 825,
+      },
+      {
+        src: "/projects/pulse/profile.webp",
+        alt: "A user profile page showing the account alias and avatar",
+        label: "PROFILE",
+        width: 1600,
+        height: 825,
+      },
+    ],
   },
   {
     title: "Smart Parking Management Platform",
@@ -37,6 +76,9 @@ export const projects: Project[] = [
     ],
     tech: ["Quarkus", "Kafka", "PostgreSQL", "React", "Docker", "Kubernetes", "JUnit 5"],
     demoUrl: "https://youtu.be/gIswiIaDojU",
+    shortName: "SmartPark",
+    discipline: "EVENT-DRIVEN",
+    cover: "/projects/smartpark.jpg",
   },
   {
     title: "E-commerce Platform with AI Chatbot Integration",
@@ -51,6 +93,9 @@ export const projects: Project[] = [
     ],
     tech: ["Java", "Spring Boot", "Angular", "REST APIs", "Payments", "Notifications"],
     demoUrl: "https://youtu.be/-6_inzLlELU",
+    shortName: "Commerce",
+    discipline: "AI CHATBOT",
+    cover: "/projects/commerce.jpg",
   },
   {
     title: "Contract Data Processing System",
@@ -64,5 +109,8 @@ export const projects: Project[] = [
       "Coordinated development tasks and code review within a small delivery team.",
     ],
     tech: ["Spring Boot", "Angular", "PostgreSQL", "Oracle", "MongoDB", "Git"],
+    shortName: "Contracts",
+    discipline: "PRODUCTION",
+    cover: "/projects/contracts.jpg",
   },
 ];

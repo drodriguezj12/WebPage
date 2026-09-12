@@ -1,62 +1,242 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #0a0a0c;
-  --color-surface: #121216;
-  --color-border: #1f1f24;
-  --color-text: #f4f4f5;
-  --color-muted: #a1a1aa;
-  --color-accent: #ff6a3d;
-  --color-accent-soft: #2a0d02;
-  --font-display: var(--font-geist-sans);
-  --font-sans: var(--font-inter);
+  --color-bg: #08080a;
+  --color-surface: #0e0e11;
+  --color-border: #1b1b20;
+  --color-text: #f2f2f4;
+  --color-muted: #86868f;
+  --color-dim: #6f6f78;
+  --color-steel: #cbd5e1;
+  --color-signal: #f5a524;
 
-  --gradient-accent: linear-gradient(100deg, #ff6a3d, #ff9e2c);
+  --font-display: var(--font-big-shoulders);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains);
 }
 
 html {
-  scroll-behavior: smooth;
-}
-
-@keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-.animate-marquee {
-  animation: marquee 28s linear infinite;
-}
-
-@keyframes breathe {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.45;
-  }
-  50% {
-    transform: scale(1.18);
-    opacity: 0.7;
-  }
-}
-
-.animate-breathe {
-  animation: breathe 7s ease-in-out infinite;
-}
-
-.text-gradient-accent {
-  background-image: var(--gradient-accent);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  /* Lenis drives scrolling; native smooth scrolling fights it. */
+  scroll-behavior: auto;
+  /* Clears the 48px collapsed header for anchor jumps and focus-driven
+     scrolling alike (scroll-padding applies to any scroll into view, not
+     just fragment navigation, unlike the per-section scroll-margin it
+     replaces). */
+  scroll-padding-top: 3.5rem;
+  /* The page is dark by design, not just in dark mode — without this,
+     Windows Chrome/Edge draw light scrollbars and light form controls. */
+  color-scheme: dark;
 }
 
 body {
   background-color: var(--color-bg);
   color: var(--color-text);
+}
+
+/*
+ * Lenis's own recommended CSS (from node_modules/lenis/dist/lenis.css).
+ * The .lenis-smooth iframe rule is the one that matters most here: it stops
+ * a playing YouTube embed from swallowing wheel scrolling mid-glide. That
+ * class is only present during an active smooth scroll (Lenis removes it at
+ * rest — node_modules/lenis/dist/lenis.mjs:1041), so the iframe stays
+ * clickable and interactive whenever the page isn't actually scrolling.
+ */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis:not(.lenis-autoToggle).lenis-stopped {
+  overflow: clip;
+}
+
+.lenis [data-lenis-prevent],
+.lenis [data-lenis-prevent-wheel],
+.lenis [data-lenis-prevent-touch],
+.lenis [data-lenis-prevent-vertical],
+.lenis [data-lenis-prevent-horizontal] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+.lenis.lenis-autoToggle {
+  transition-property: overflow;
+  transition-duration: 1ms;
+  transition-behavior: allow-discrete;
+}
+
+/* Display type: condensed, uppercase, tight. Never used for body copy. */
+.display {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 0.88;
+}
+
+/* Mono label: small, wide, quiet. */
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-dim);
+}
+
+/* Technical-drawing cue. Decorative only. */
+.grid-overlay {
+  background-image:
+    linear-gradient(to right, rgba(203, 213, 225, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(203, 213, 225, 0.04) 1px, transparent 1px);
+  background-size: 96px 96px;
+}
+
+/* A line of a SplitText reveal sits behind this edge until animated. */
+.split-line {
+  display: block;
+  overflow: hidden;
+}
+
+/*
+ * Cover reveal (I1/I2): pure CSS so the headline and the project index — the
+ * page's first screen — are visible from first paint, animate exactly once,
+ * and can never be hidden-then-replayed by client JavaScript. Duration,
+ * delay and easing are set inline per element from lib/motion.ts; only the
+ * keyframe shape and the reduced-motion opt-in live here.
+ */
+@keyframes cover-line-reveal {
+  from {
+    transform: translateY(110%);
+  }
+  to {
+    transform: translateY(0%);
+  }
+}
+
+@keyframes cover-item-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cover-reveal-line {
+    animation-name: cover-line-reveal;
+    animation-fill-mode: both;
+  }
+
+  .cover-reveal-item {
+    animation-name: cover-item-reveal;
+    animation-fill-mode: both;
+  }
+}
+
+/*
+ * Cover height-aware sizing (I1): the 130px xl headline is tuned for tall
+ * viewports. At common laptop/desktop heights it leaves the project index —
+ * the design's one concession to a recruiter skimming — below the first
+ * screen. Unlayered rules always outrank an `@layer` (Tailwind's utilities
+ * live in one), so these win over `text-[130px]` regardless of source order,
+ * and only match at desktop widths, where that utility is the active one.
+ */
+@media (min-width: 1280px) and (max-height: 900px) {
+  .cover-headline {
+    font-size: 108px;
+  }
+  .cover-shell {
+    gap: 2.5rem;
+  }
+}
+
+@media (min-width: 1280px) and (max-height: 864px) {
+  .cover-headline {
+    font-size: 98px;
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 768px) {
+  .cover-headline {
+    font-size: 84px;
+  }
+  .cover-shell {
+    gap: 2rem;
+  }
+  .cover-section {
+    padding-top: 5.5rem;
+  }
+}
+
+/*
+ * The shortest tier. A 1280x720 screen leaves about 609px of inner height
+ * once the browser's own chrome is gone, and 84px still pushes the index
+ * past the fold there.
+ */
+@media (min-width: 1024px) and (max-height: 640px) {
+  .cover-headline {
+    font-size: 74px;
+  }
+  .cover-shell {
+    gap: 1.5rem;
+  }
+  .cover-section {
+    padding-top: 4.5rem;
+  }
+}
+
+/*
+ * Pulse pinned-stage height-aware fit (I-fix1): a real in-browser viewport
+ * (screen minus browser chrome) is routinely shorter than the size a
+ * devtools picker shows, and this beat's full presentation doesn't fit a
+ * common laptop height alongside the CTA footer while pinned. Scoped to
+ * `[data-pinned]` — set by Pinned itself only on its animated, pinned
+ * rendering — so the reduced-motion/no-JS stacked fallback, which has no
+ * one-screen budget to protect, renders exactly as it always has.
+ *
+ * Plain hand-written rules rather than Tailwind's arbitrary-variant syntax:
+ * stacking an arbitrary ancestor-selector variant with an arbitrary media
+ * variant (`[[data-pinned]_&]:[@media(...)]:h-[220px]`, in either order, or
+ * combined into one `[@media(...){sel}]:` variant) silently failed to
+ * generate the media query in this Tailwind version — the ancestor selector
+ * came through but the height condition didn't, or the class didn't
+ * generate at all.
+ */
+@media (max-height: 800px) {
+  [data-pinned] .pulse-hero-shot {
+    height: 220px;
+    object-fit: cover;
+    object-position: top;
+  }
+  [data-pinned] .pulse-demo-wrapper {
+    max-width: var(--container-md);
+  }
+  [data-pinned] .pulse-decisions {
+    gap: 1rem;
+  }
+  [data-pinned] .pulse-decision-text {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.375;
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 700px) {
+  [data-pinned] .pulse-supporting-shot {
+    display: none;
+  }
+}
+
+@media (max-width: 1023px) and (max-height: 700px) {
+  [data-pinned] .pulse-screenshots {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -66,6 +246,5 @@ body {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
   }
 }
