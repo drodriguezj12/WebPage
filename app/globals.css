@@ -162,7 +162,7 @@ html.lenis body {
   }
 }
 
-@media (min-width: 1280px) and (max-height: 768px) {
+@media (min-width: 1024px) and (max-height: 768px) {
   .cover-headline {
     font-size: 84px;
   }
@@ -171,6 +171,23 @@ html.lenis body {
   }
   .cover-section {
     padding-top: 5.5rem;
+  }
+}
+
+/*
+ * The shortest tier. A 1280x720 screen leaves about 609px of inner height
+ * once the browser's own chrome is gone, and 84px still pushes the index
+ * past the fold there.
+ */
+@media (min-width: 1024px) and (max-height: 640px) {
+  .cover-headline {
+    font-size: 74px;
+  }
+  .cover-shell {
+    gap: 1.5rem;
+  }
+  .cover-section {
+    padding-top: 4.5rem;
   }
 }
 
