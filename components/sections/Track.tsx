@@ -1,4 +1,5 @@
 import { educationItems } from "@/data/education";
+import { experienceItems } from "@/data/experience";
 import { skillCategories } from "@/data/skills";
 import { SectionHeader } from "@/components/SectionHeader";
 import { Stagger } from "@/components/motion/Stagger";
@@ -11,6 +12,16 @@ export function Track() {
 
         <div className="grid gap-16 lg:grid-cols-[0.8fr_1.2fr]">
           <Stagger className="grid gap-8">
+            {experienceItems.map((item) => (
+              <div key={item.company} className="border-t border-border pt-5">
+                <p className="label">{item.period}</p>
+                <h3 className="display mt-3 text-[24px]">{item.company}</h3>
+                <p className="mt-2 text-sm text-text">{item.role}</p>
+                <p className="mt-3 max-w-[40ch] text-sm leading-relaxed text-muted">
+                  {item.description}
+                </p>
+              </div>
+            ))}
             {educationItems.map((item) => (
               <div key={item.institution} className="border-t border-border pt-5">
                 <h3 className="display text-[24px]">{item.institution}</h3>

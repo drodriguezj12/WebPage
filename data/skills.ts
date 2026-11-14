@@ -4,34 +4,45 @@ export type SkillCategory = {
 };
 
 export const skillCategories: SkillCategory[] = [
-  { name: "Languages", items: ["Java", "JavaScript", "Python", "HTML", "CSS"] },
+  {
+    name: "Languages",
+    items: ["Java", "TypeScript", "JavaScript", "SQL", "Python", "HTML", "CSS"],
+  },
   {
     name: "Backend",
-    items: ["Spring Boot", "REST APIs", "Quarkus", "System design", "Clean architecture"],
-  },
-  {
-    name: "Frontend",
-    items: ["Angular", "React", "Responsive UI", "Vite", "Forms", "Dashboards"],
-  },
-  {
-    name: "Databases",
-    items: ["PostgreSQL", "Oracle", "MongoDB", "Query optimization", "Data consistency"],
-  },
-  {
-    name: "Cloud & DevOps",
-    items: ["Docker", "AWS", "Virtual machines", "Kubernetes", "Minikube", "Prometheus"],
-  },
-  {
-    name: "Tools & Methods",
     items: [
-      "Git",
-      "GitHub",
-      "Jira",
-      "ClickUp",
-      "Scrum",
-      "Agile",
-      "Cisco Packet Tracer",
-      "Vensim",
+      "Spring Boot",
+      "Spring AI",
+      "Quarkus",
+      "REST APIs",
+      "Swagger/OpenAPI",
+      "Hibernate/JPA",
+      "WebSocket/STOMP",
+      "JWT",
+      "Apache Kafka",
+      "LLM APIs",
     ],
+  },
+  { name: "Frontend", items: ["Angular", "React"] },
+  {
+    name: "Data",
+    items: ["PostgreSQL", "PL/pgSQL", "Oracle", "MongoDB", "SQL tuning", "Flyway"],
+  },
+  {
+    name: "DevOps & Testing",
+    items: [
+      "Docker",
+      "Docker Compose",
+      "Kubernetes",
+      "Maven",
+      "GitHub Actions",
+      "JUnit 5",
+      "Testcontainers",
+      "RestAssured",
+    ],
+  },
+  {
+    name: "Automation & Methods",
+    items: ["Power Apps", "Power Automate", "ServiceNow", "Git", "Jira", "Scrum", "Agile"],
   },
 ];

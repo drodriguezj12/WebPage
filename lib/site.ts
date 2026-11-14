@@ -13,4 +13,4 @@ export const SITE_URL =
     : "https://danielrodriguezportfolio.vercel.app");
 
 export const GITHUB_URL = "https://github.com/drodriguezj12";
-export const LINKEDIN_URL = "https://www.linkedin.com/in/daniel-rodriguez-b795a8406/";
+export const LINKEDIN_URL = "https://www.linkedin.com/in/danielrodriguezj";

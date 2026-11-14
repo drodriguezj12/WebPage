@@ -64,6 +64,22 @@ export const projects: Project[] = [
     ],
   },
   {
+    title: "SECOP II Contract Search Platform",
+    tag: "Client work",
+    description:
+      "Web platform built for Proyectos y Servicios RACO to search, filter and get notified about public procurement contracts published on SECOP II, with an LLM assistant that answers questions in natural language.",
+    achievements: [
+      "Built search, filtering, notifications and PDF reports with Java 21, Spring Boot 3, Angular and PostgreSQL, behind REST APIs secured with JWT, Google sign-in and 2FA.",
+      "Integrated an assistant (OpenAI GPT-4o-mini through Spring AI) that turns a question into a SoQL query against the Socrata open-data API, with a token limit per interaction.",
+      "In timed tests with RACO users, multi-criteria searches took over 90% less time than on the SECOP II portal; 87.5% of surveyed users said they would keep using it.",
+      "Covered it with 79 backend and 36 frontend unit tests plus 18 security tests, which caught and fixed two authentication and validation defects; search endpoints answer in 205-758 ms.",
+    ],
+    tech: ["Java 21", "Spring Boot", "Spring AI", "Angular", "PostgreSQL", "OpenAI API", "JWT"],
+    shortName: "SECOP II",
+    discipline: "LLM SEARCH",
+    cover: "/projects/contracts.jpg",
+  },
+  {
     title: "Smart Parking Management Platform",
     tag: "Real-time",
     description:
@@ -79,38 +95,5 @@ export const projects: Project[] = [
     shortName: "SmartPark",
     discipline: "EVENT-DRIVEN",
     cover: "/projects/smartpark.jpg",
-  },
-  {
-    title: "E-commerce Platform with AI Chatbot Integration",
-    tag: "Commerce",
-    description:
-      "Full-stack commerce platform for product management, dynamic customer interaction, payment flows, and real-time notifications.",
-    achievements: [
-      "Developed product catalog and CRUD workflows with Spring Boot and Angular.",
-      "Integrated a conversational chatbot to automate customer request handling and improve response efficiency.",
-      "Implemented payment gateway integration for secure online transactions.",
-      "Built a notification system and applied scalable architecture and performance optimization practices.",
-    ],
-    tech: ["Java", "Spring Boot", "Angular", "REST APIs", "Payments", "Notifications"],
-    demoUrl: "https://youtu.be/-6_inzLlELU",
-    shortName: "Commerce",
-    discipline: "AI CHATBOT",
-    cover: "/projects/commerce.jpg",
-  },
-  {
-    title: "Contract Data Processing System",
-    tag: "Production",
-    description:
-      "Production web application work at Proyectos y Servicios RACO S.A.S focused on contract search, backend reliability, and database performance.",
-    achievements: [
-      "Improved contract search query response times by approximately 30%.",
-      "Designed and maintained RESTful APIs supporting business logic and large-scale data handling.",
-      "Reduced errors through debugging, backend optimization, and database query improvements.",
-      "Coordinated development tasks and code review within a small delivery team.",
-    ],
-    tech: ["Spring Boot", "Angular", "PostgreSQL", "Oracle", "MongoDB", "Git"],
-    shortName: "Contracts",
-    discipline: "PRODUCTION",
-    cover: "/projects/contracts.jpg",
   },
 ];

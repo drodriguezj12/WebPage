@@ -8,7 +8,7 @@ import { Stagger } from "@/components/motion/Stagger";
 const CLAIMS = [
   {
     title: "I optimise what I can measure",
-    body: "Contract search at Proyectos y Servicios RACO returned roughly 30% faster after reworking the queries behind it.",
+    body: "In timed tests with RACO users, contract searches that combine entity or value filters took over 90% less time on the platform than on the SECOP II portal. Its search endpoints answer in 205-758 ms.",
   },
   {
     title: "I test against the real thing",

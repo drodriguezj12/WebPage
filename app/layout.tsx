@@ -24,13 +24,13 @@ const mono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   alternates: { canonical: "/" },
-  title: "Daniel Rodriguez | Full-Stack Developer",
+  title: "Daniel Rodriguez | Backend / Full-Stack Developer",
   description:
-    "Daniel Rodriguez, Full-Stack Developer and Systems Engineering student in Bogotá, Colombia. Portfolio, projects, skills, education, and contact.",
+    "Daniel Rodriguez, Backend / Full-Stack Developer in Bogotá, Colombia. Java, Spring Boot, Angular and PostgreSQL. Projects, experience, skills and contact.",
   openGraph: {
-    title: "Daniel Rodriguez | Full-Stack Developer",
+    title: "Daniel Rodriguez | Backend / Full-Stack Developer",
     description:
-      "Full-Stack Developer specialized in Java, Spring Boot, Angular, REST APIs, databases, and production-ready web applications.",
+      "Backend-leaning Full-Stack Developer: Java, Spring Boot, Angular, PostgreSQL, event-driven microservices and LLM integrations.",
     type: "website",
     locale: "en_US",
     url: SITE_URL,
