@@ -1,19 +1,15 @@
 import { ImageResponse } from "next/og";
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
+import { profile } from "@/data/profile";
+import { loadGeist } from "@/lib/ogFont";
 
 export const alt = "Daniel Rodriguez | Backend / Full-Stack Developer";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
+const ACCENTS = ["#f0429f", "#c99a1c", "#3ecf8e"];
+
 export default async function OpenGraphImage() {
-  // Load the font from disk; process.cwd() resolves to the project root at build time.
-  const bigShouldersBold = await readFile(
-    join(
-      process.cwd(),
-      "node_modules/@fontsource/big-shoulders/files/big-shoulders-latin-800-normal.woff"
-    )
-  );
+  const [medium, semibold] = await Promise.all([loadGeist(500), loadGeist(600)]);
 
   return new ImageResponse(
     (
@@ -24,84 +20,52 @@ export default async function OpenGraphImage() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          backgroundColor: "#08080a",
-          padding: "80px",
-          // Satori has no system fonts: with a single registered font it renders
-          // every text node in it. Declaring it here says what actually renders.
-          fontFamily: "Big Shoulders",
+          backgroundColor: "#f5f5f7",
+          padding: "72px 80px",
+          fontFamily: "Geist",
+          color: "#1d1d1f",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "64px",
-              height: "64px",
-              borderRadius: "14px",
-              backgroundColor: "#cbd5e1",
-              color: "#08080a",
-              fontSize: "30px",
-              fontWeight: 700,
-            }}
-          >
-            DR
-          </div>
-          <div style={{ color: "#86868f", fontSize: "26px", fontWeight: 600 }}>
-            Daniel Rodriguez
-          </div>
+        <div style={{ display: "flex", fontSize: "26px", fontWeight: 500, color: "#5e5e63" }}>
+          {profile.name} · {profile.role}
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "16px",
-              color: "#cbd5e1",
-              fontSize: "24px",
-              fontWeight: 700,
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-            }}
-          >
-            Full-Stack Developer
-          </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              fontFamily: "Big Shoulders",
-              fontWeight: 800,
-              fontSize: "76px",
-              lineHeight: 1.05,
-              textTransform: "uppercase",
-              letterSpacing: "-0.01em",
-              color: "#cbd5e1",
-              maxWidth: "1000px",
-            }}
-          >
-            <span>Systems that hold up</span>
-            <span>in production.</span>
-          </div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            fontSize: "104px",
+            fontWeight: 600,
+            letterSpacing: "-0.05em",
+            lineHeight: 0.98,
+          }}
+        >
+          <span>{profile.headline[0]}</span>
+          <span>{profile.headline[1]}</span>
+          <span style={{ color: "#86868b" }}>{profile.headline[2]}</span>
         </div>
 
-        <div style={{ display: "flex", gap: "12px", color: "#86868f", fontSize: "24px" }}>
-          Java · Spring Boot · Angular · AWS · Kubernetes
+        <div style={{ display: "flex", alignItems: "center", gap: "28px" }}>
+          <div style={{ display: "flex", gap: "10px" }}>
+            {ACCENTS.map((color) => (
+              <div
+                key={color}
+                style={{ width: "44px", height: "6px", borderRadius: "3px", backgroundColor: color }}
+              />
+            ))}
+          </div>
+          <div style={{ display: "flex", fontSize: "24px", fontWeight: 500, color: "#5e5e63" }}>
+            Java · Spring Boot · Angular · PostgreSQL
+          </div>
         </div>
       </div>
     ),
     {
       ...size,
       fonts: [
-        {
-          name: "Big Shoulders",
-          data: bigShouldersBold,
-          weight: 800,
-          style: "normal",
-        },
+        { name: "Geist", data: medium, weight: 500, style: "normal" },
+        { name: "Geist", data: semibold, weight: 600, style: "normal" },
       ],
-    }
+    },
   );
 }

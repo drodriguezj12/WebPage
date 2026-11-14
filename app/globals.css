@@ -1,125 +1,232 @@
 @import "tailwindcss";
 
-@theme {
-  --color-bg: #08080a;
-  --color-surface: #0e0e11;
-  --color-border: #1b1b20;
-  --color-text: #f2f2f4;
-  --color-muted: #86868f;
-  --color-dim: #6f6f78;
-  --color-steel: #cbd5e1;
-  --color-signal: #f5a524;
+/*
+ * The site is monochrome. Colour only ever comes from the work: each project
+ * section sets --accent to its own product colour.
+ *
+ * Surfaces come in two themes, set per section with data-theme. Components use
+ * the semantic tokens below (bg, fg, muted...) and never a raw hex, so the same
+ * component reads correctly on a light or a dark section.
+ *
+ * `inline` matters: without it Tailwind resolves var(--fg) once, at :root, and
+ * every utility would carry the light theme's value into the dark sections.
+ */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-raised: var(--raised);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-paper: #f5f5f7;
+  --color-night: #0a0a0c;
 
-  --font-display: var(--font-big-shoulders);
-  --font-sans: var(--font-inter);
-  --font-mono: var(--font-jetbrains);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --ease-fluid: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root,
+[data-theme="light"] {
+  --bg: #f5f5f7;
+  --raised: #ffffff;
+  --fg: #1d1d1f;
+  --muted: #5e5e63;
+  --faint: #86868b;
+  --line: rgba(0, 0, 0, 0.1);
+  --accent: #1d1d1f;
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --bg: #0a0a0c;
+  --raised: #161618;
+  --fg: #f5f5f7;
+  --muted: #a1a1a6;
+  --faint: #7c7c82;
+  --line: rgba(255, 255, 255, 0.12);
+  --accent: #f5f5f7;
+  color-scheme: dark;
+}
+
+[data-accent="pulse"] {
+  --accent: #f0429f;
+}
+[data-accent="secop"] {
+  --accent: #9a6b00;
+}
+[data-theme="dark"] [data-accent="secop"],
+[data-theme="dark"][data-accent="secop"] {
+  --accent: #e3b341;
+}
+[data-accent="park"] {
+  --accent: #3ecf8e;
 }
 
 html {
   /* Lenis drives scrolling; native smooth scrolling fights it. */
   scroll-behavior: auto;
-  /* Clears the 48px collapsed header for anchor jumps and focus-driven
-     scrolling alike (scroll-padding applies to any scroll into view, not
-     just fragment navigation, unlike the per-section scroll-margin it
-     replaces). */
-  scroll-padding-top: 3.5rem;
-  /* The page is dark by design, not just in dark mode — without this,
-     Windows Chrome/Edge draw light scrollbars and light form controls. */
-  color-scheme: dark;
+  scroll-padding-top: 5.5rem;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background-color: var(--color-bg);
-  color: var(--color-text);
+  background-color: #f5f5f7;
+  color: #1d1d1f;
+  font-feature-settings: "ss01", "cv11";
 }
 
-/*
- * Lenis's own recommended CSS (from node_modules/lenis/dist/lenis.css).
- * The .lenis-smooth iframe rule is the one that matters most here: it stops
- * a playing YouTube embed from swallowing wheel scrolling mid-glide. That
- * class is only present during an active smooth scroll (Lenis removes it at
- * rest — node_modules/lenis/dist/lenis.mjs:1041), so the iframe stays
- * clickable and interactive whenever the page isn't actually scrolling.
- */
+[data-theme] {
+  background-color: var(--bg);
+  color: var(--fg);
+}
+
+::selection {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+/* Lenis's own recommended CSS. */
 html.lenis,
 html.lenis body {
   height: auto;
 }
-
 .lenis:not(.lenis-autoToggle).lenis-stopped {
   overflow: clip;
 }
-
-.lenis [data-lenis-prevent],
-.lenis [data-lenis-prevent-wheel],
-.lenis [data-lenis-prevent-touch],
-.lenis [data-lenis-prevent-vertical],
-.lenis [data-lenis-prevent-horizontal] {
+.lenis [data-lenis-prevent] {
   overscroll-behavior: contain;
 }
-
+/* Stops a playing YouTube embed from swallowing the wheel mid-glide. */
 .lenis.lenis-smooth iframe {
   pointer-events: none;
 }
 
-.lenis.lenis-autoToggle {
-  transition-property: overflow;
-  transition-duration: 1ms;
-  transition-behavior: allow-discrete;
+/* ---------------------------------------------------------------- type */
+
+.display-xl {
+  /* Capped by height too, so the hero's project rail stays on the first screen. */
+  font-size: clamp(2.75rem, min(8.6vw, 11vh), 8rem);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 0.96;
+  text-wrap: balance;
 }
 
-/* Display type: condensed, uppercase, tight. Never used for body copy. */
-.display {
-  font-family: var(--font-display);
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: -0.01em;
-  line-height: 0.88;
+.display-lg {
+  font-size: clamp(2.5rem, 7vw, 6.25rem);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 0.98;
+  text-wrap: balance;
 }
 
-/* Mono label: small, wide, quiet. */
-.label {
+.display-md {
+  font-size: clamp(1.875rem, 4.2vw, 3.5rem);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.04;
+  text-wrap: balance;
+}
+
+.lede {
+  font-size: clamp(1.0625rem, 1.5vw, 1.3125rem);
+  line-height: 1.5;
+  letter-spacing: -0.011em;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  padding: 0.375rem 0.75rem;
   font-family: var(--font-mono);
   font-size: 0.6875rem;
-  letter-spacing: 0.16em;
+  font-weight: 500;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-dim);
+  color: var(--muted);
 }
 
-/* Technical-drawing cue. Decorative only. */
-.grid-overlay {
-  background-image:
-    linear-gradient(to right, rgba(203, 213, 225, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(203, 213, 225, 0.04) 1px, transparent 1px);
-  background-size: 96px 96px;
+.eyebrow-dot {
+  height: 0.375rem;
+  width: 0.375rem;
+  border-radius: 999px;
+  background: var(--accent);
 }
 
-/* A line of a SplitText reveal sits behind this edge until animated. */
-.split-line {
-  display: block;
-  overflow: hidden;
+.mono-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
 }
+
+.focus-ring:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 4px;
+}
+
+/* --------------------------------------------------------------- frame */
 
 /*
- * Cover reveal (I1/I2): pure CSS so the headline and the project index — the
- * page's first screen — are visible from first paint, animate exactly once,
- * and can never be hidden-then-replayed by client JavaScript. Duration,
- * delay and easing are set inline per element from lib/motion.ts; only the
- * keyframe shape and the reduced-motion opt-in live here.
+ * Media never sits flat on the page. An outer tray and an inner plate with
+ * concentric radii make it read as a machined object rather than a card.
  */
-@keyframes cover-line-reveal {
-  from {
-    transform: translateY(110%);
+.frame {
+  border-radius: 2rem;
+  padding: 0.375rem;
+  background: color-mix(in srgb, var(--fg) 6%, transparent);
+  box-shadow: 0 0 0 1px var(--line);
+}
+
+.frame-core {
+  overflow: hidden;
+  border-radius: calc(2rem - 0.375rem);
+  background: #0a0a0c;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.12);
+}
+
+@media (max-width: 767px) {
+  .frame {
+    border-radius: 1.25rem;
+    padding: 0.25rem;
   }
-  to {
-    transform: translateY(0%);
+  .frame-core {
+    border-radius: calc(1.25rem - 0.25rem);
   }
 }
 
-@keyframes cover-item-reveal {
+/* -------------------------------------------------------------- motion */
+
+/*
+ * `html.motion` is set by an inline script before first paint, and only when
+ * the visitor has not asked for reduced motion. Without it (no JavaScript, or
+ * reduced motion) every rule below is inert and the page is simply there.
+ */
+
+@keyframes line-rise {
+  from {
+    transform: translateY(105%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-rise {
   from {
     opacity: 0;
-    transform: translateY(24px);
+    transform: translateY(18px);
   }
   to {
     opacity: 1;
@@ -127,115 +234,72 @@ html.lenis body {
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .cover-reveal-line {
-    animation-name: cover-line-reveal;
-    animation-fill-mode: both;
-  }
+.line-mask {
+  display: block;
+  overflow: hidden;
+  /* Room for descenders, which the tight line-height would otherwise clip. */
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
 
-  .cover-reveal-item {
-    animation-name: cover-item-reveal;
-    animation-fill-mode: both;
-  }
+html.motion .hero-line {
+  display: block;
+  animation: line-rise 1s var(--ease-out-soft) both;
+  animation-delay: calc(var(--i, 0) * 90ms + 80ms);
+}
+
+html.motion .hero-item {
+  animation: fade-rise 0.9s var(--ease-out-soft) both;
+  animation-delay: calc(var(--i, 0) * 80ms + 420ms);
+}
+
+/* Scroll reveals: RevealObserver flips data-revealed when the element enters. */
+html.motion [data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.9s var(--ease-out-soft),
+    transform 0.9s var(--ease-out-soft);
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+
+html.motion [data-reveal][data-revealed] {
+  opacity: 1;
+  transform: none;
 }
 
 /*
- * Cover height-aware sizing (I1): the 130px xl headline is tuned for tall
- * viewports. At common laptop/desktop heights it leaves the project index —
- * the design's one concession to a recruiter skimming — below the first
- * screen. Unlayered rules always outrank an `@layer` (Tailwind's utilities
- * live in one), so these win over `text-[130px]` regardless of source order,
- * and only match at desktop widths, where that utility is the active one.
+ * Travelling dots (hero rail, SmartPark diagram) are SVG SMIL animations,
+ * which no media query can pause. They stay invisible unless motion is allowed.
  */
-@media (min-width: 1280px) and (max-height: 900px) {
-  .cover-headline {
-    font-size: 108px;
-  }
-  .cover-shell {
-    gap: 2.5rem;
-  }
+.packet {
+  visibility: hidden;
 }
 
-@media (min-width: 1280px) and (max-height: 864px) {
-  .cover-headline {
-    font-size: 98px;
-  }
+html.motion .packet {
+  visibility: visible;
 }
 
-@media (min-width: 1024px) and (max-height: 768px) {
-  .cover-headline {
-    font-size: 84px;
-  }
-  .cover-shell {
-    gap: 2rem;
-  }
-  .cover-section {
-    padding-top: 5.5rem;
-  }
+/* SECOP flow: each step lights up in turn once the figure is on screen. */
+html.motion [data-flow] [data-step] {
+  opacity: 0.28;
+  transition: opacity 0.7s var(--ease-out-soft);
+  transition-delay: calc(var(--step) * 520ms);
 }
 
-/*
- * The shortest tier. A 1280x720 screen leaves about 609px of inner height
- * once the browser's own chrome is gone, and 84px still pushes the index
- * past the fold there.
- */
-@media (min-width: 1024px) and (max-height: 640px) {
-  .cover-headline {
-    font-size: 74px;
-  }
-  .cover-shell {
-    gap: 1.5rem;
-  }
-  .cover-section {
-    padding-top: 4.5rem;
-  }
+html.motion [data-flow][data-revealed] [data-step] {
+  opacity: 1;
 }
 
-/*
- * Pulse pinned-stage height-aware fit (I-fix1): a real in-browser viewport
- * (screen minus browser chrome) is routinely shorter than the size a
- * devtools picker shows, and this beat's full presentation doesn't fit a
- * common laptop height alongside the CTA footer while pinned. Scoped to
- * `[data-pinned]` — set by Pinned itself only on its animated, pinned
- * rendering — so the reduced-motion/no-JS stacked fallback, which has no
- * one-screen budget to protect, renders exactly as it always has.
- *
- * Plain hand-written rules rather than Tailwind's arbitrary-variant syntax:
- * stacking an arbitrary ancestor-selector variant with an arbitrary media
- * variant (`[[data-pinned]_&]:[@media(...)]:h-[220px]`, in either order, or
- * combined into one `[@media(...){sel}]:` variant) silently failed to
- * generate the media query in this Tailwind version — the ancestor selector
- * came through but the height condition didn't, or the class didn't
- * generate at all.
- */
-@media (max-height: 800px) {
-  [data-pinned] .pulse-hero-shot {
-    height: 220px;
-    object-fit: cover;
-    object-position: top;
+/* Pulse stage: tall scroll track with a sticky viewport, desktop only. */
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  html.motion .stage-track {
+    height: 190vh;
   }
-  [data-pinned] .pulse-demo-wrapper {
-    max-width: var(--container-md);
-  }
-  [data-pinned] .pulse-decisions {
-    gap: 1rem;
-  }
-  [data-pinned] .pulse-decision-text {
-    margin-top: 0.5rem;
-    font-size: 0.875rem;
-    line-height: 1.375;
-  }
-}
-
-@media (min-width: 1024px) and (max-height: 700px) {
-  [data-pinned] .pulse-supporting-shot {
-    display: none;
-  }
-}
-
-@media (max-width: 1023px) and (max-height: 700px) {
-  [data-pinned] .pulse-screenshots {
-    display: none;
+  html.motion .stage-sticky {
+    position: sticky;
+    top: 0;
+    height: 100dvh;
   }
 }
 

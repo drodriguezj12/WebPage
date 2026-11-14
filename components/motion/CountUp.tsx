@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { formatFigure, parseFigure } from "@/lib/countUp";
-import { DURATION, EASE } from "@/lib/motion";
+import { EASE } from "@/lib/motion";
 import { useMotionAllowed } from "@/lib/useReducedMotion";
 
 export function CountUp({
@@ -28,9 +28,9 @@ export function CountUp({
     const ctx = gsap.context(() => {
       gsap.to(state, {
         value: parsed.value,
-        duration: DURATION.section,
+        duration: 1.2,
         ease: EASE.out,
-        scrollTrigger: { trigger: el, start: "top 90%", once: true },
+        scrollTrigger: { trigger: el, start: "top 92%", once: true },
         onUpdate: () => {
           el.textContent = formatFigure(state.value, parsed);
         },
@@ -47,8 +47,9 @@ export function CountUp({
   }, [figure, animate]);
 
   // The final value is the server-rendered content: no JavaScript, no problem.
+  // tabular-nums keeps the width steady while the digits run.
   return (
-    <span ref={ref} className={className}>
+    <span ref={ref} className={`tabular-nums ${className}`}>
       {figure}
     </span>
   );

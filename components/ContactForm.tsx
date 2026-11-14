@@ -121,12 +121,15 @@ export function ContactForm() {
     <form
       onSubmit={handleSubmit}
       noValidate
-      className="relative border border-border bg-surface p-7"
+      className="relative rounded-[1.75rem] bg-raised p-6 shadow-[inset_0_0_0_1px_var(--line)] md:p-9"
     >
       <div className="grid gap-4 sm:grid-cols-2">
         {TEXT_FIELDS.map((field) => (
-          <div key={field.name} className="grid gap-1.5">
-            <label htmlFor={field.name} className="text-sm font-bold text-text">
+          <div
+            key={field.name}
+            className={`grid gap-1.5 ${field.name === "subject" ? "sm:col-span-2" : ""}`}
+          >
+            <label htmlFor={field.name} className="text-[0.8125rem] font-medium text-muted">
               {field.label}
             </label>
             <input
@@ -138,29 +141,29 @@ export function ContactForm() {
               onChange={(event) => handleChange(field.name, event.target.value)}
               onBlur={() => handleBlur(field.name)}
               aria-invalid={Boolean(errors[field.name])}
-              className="h-11 border border-border bg-bg px-3 text-text focus:border-steel focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-steel"
+              className="h-12 rounded-xl bg-bg px-4 text-fg shadow-[inset_0_0_0_1px_var(--line)] transition-shadow duration-300 ease-fluid placeholder:text-faint focus:shadow-[inset_0_0_0_2px_var(--fg)] focus-visible:outline-none aria-[invalid=true]:shadow-[inset_0_0_0_1px_#f87171]"
             />
-            <span className="min-h-[18px] text-sm font-semibold text-red-400">
+            <span className="min-h-[18px] text-[0.8125rem] font-medium text-red-400">
               {errors[field.name]}
             </span>
           </div>
         ))}
 
         <div className="grid gap-1.5 sm:col-span-2">
-          <label htmlFor="message" className="text-sm font-bold text-text">
+          <label htmlFor="message" className="text-[0.8125rem] font-medium text-muted">
             Message
           </label>
           <textarea
             id="message"
             name="message"
-            placeholder="Tell Daniel what you need built, optimized, or discussed."
+            placeholder="What you need built, optimised or discussed."
             value={values.message}
             onChange={(event) => handleChange("message", event.target.value)}
             onBlur={() => handleBlur("message")}
             aria-invalid={Boolean(errors.message)}
-            className="min-h-[132px] resize-y border border-border bg-bg px-3 py-2.5 text-text focus:border-steel focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-steel"
+            className="min-h-[148px] resize-y rounded-xl py-3 bg-bg px-4 text-fg shadow-[inset_0_0_0_1px_var(--line)] transition-shadow duration-300 ease-fluid placeholder:text-faint focus:shadow-[inset_0_0_0_2px_var(--fg)] focus-visible:outline-none aria-[invalid=true]:shadow-[inset_0_0_0_1px_#f87171]"
           />
-          <span className="min-h-[18px] text-sm font-semibold text-red-400">{errors.message}</span>
+          <span className="min-h-[18px] text-[0.8125rem] font-medium text-red-400">{errors.message}</span>
         </div>
       </div>
 
@@ -183,14 +186,14 @@ export function ContactForm() {
         <button
           type="submit"
           disabled={isSending}
-          className="inline-flex h-12 items-center justify-center gap-2 bg-steel px-5 font-bold text-bg motion-safe:transition-transform motion-safe:enabled:hover:-translate-y-0.5 motion-safe:enabled:active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-steel disabled:cursor-not-allowed disabled:opacity-60"
+          className="focus-ring inline-flex h-12 items-center justify-center rounded-full bg-fg px-6 text-[0.9375rem] font-medium text-bg transition-transform duration-500 ease-fluid enabled:active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isSending ? "Sending..." : "Send message"}
         </button>
         <p
           role="status"
           aria-live="polite"
-          className={`font-bold ${status?.tone === "error" ? "text-red-400" : "text-steel"}`}
+          className={`text-sm font-medium ${status?.tone === "error" ? "text-red-400" : "text-fg"}`}
         >
           {status?.text ?? ""}
         </p>
