@@ -1,6 +1,7 @@
 import { ClipVideo } from "@/components/ClipVideo";
 import { PillLink } from "@/components/PillLink";
 import { ScaleStage } from "@/components/motion/ScaleStage";
+import { ClipMoments } from "@/components/project/ClipMoments";
 import { PointList, ProjectIntro, TechLine } from "@/components/project/parts";
 import { pulse } from "@/data/projects";
 
@@ -50,30 +51,7 @@ export function PulseSection() {
           </div>
         </div>
 
-        <div className="grid gap-20 md:gap-32">
-          {pulse.moments.map((moment, index) => (
-            <article
-              key={moment.title}
-              className="grid items-center gap-8 lg:grid-cols-12 lg:gap-12"
-            >
-              <div
-                data-reveal
-                className={`lg:col-span-4 ${index % 2 === 1 ? "lg:col-start-9 lg:row-start-1" : ""}`}
-              >
-                <h3 className="display-md">{moment.title}</h3>
-                <p className="lede mt-5">{moment.body}</p>
-              </div>
-              <div
-                data-reveal
-                className={`frame lg:col-span-8 ${index % 2 === 1 ? "lg:col-start-1 lg:row-start-1" : ""}`}
-              >
-                <div className="frame-core">
-                  <ClipVideo clip={moment.clip} />
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
+        <ClipMoments moments={pulse.moments} />
 
         <div className="mt-24 md:mt-36">
           <h3 data-reveal className="display-md max-w-[18ch]">

@@ -27,14 +27,23 @@ export type Clip = {
 
 export type Point = { title: string; body: string };
 
-function pulseClip(name: string, label: string): Clip {
-  const base = `/projects/pulse/${name}`;
-  return {
-    label,
-    wide: { src: `${base}.mp4`, poster: `${base}.jpg`, width: 1600, height: 754 },
-    tall: { src: `${base}-mobile.mp4`, poster: `${base}-mobile.jpg`, width: 720, height: 916 },
+export type Moment = Point & { clip: Clip };
+
+type Size = { width: number; height: number };
+
+function clipFrom(folder: string, wide: Size, tall: Size) {
+  return (name: string, label: string): Clip => {
+    const base = `/projects/${folder}/${name}`;
+    return {
+      label,
+      wide: { src: `${base}.mp4`, poster: `${base}.jpg`, ...wide },
+      tall: { src: `${base}-mobile.mp4`, poster: `${base}-mobile.jpg`, ...tall },
+    };
   };
 }
+
+const pulseClip = clipFrom("pulse", { width: 1600, height: 754 }, { width: 720, height: 916 });
+const secopClip = clipFrom("secop", { width: 1600, height: 900 }, { width: 720, height: 864 });
 
 export const pulse = {
   id: "pulse",
@@ -65,7 +74,7 @@ export const pulse = {
         "A post is deleted in one session and disappears from the other.",
       ),
     },
-  ],
+  ] satisfies Moment[],
   decisions: [
     {
       title: "Two services, no calls between them",
@@ -93,19 +102,37 @@ export const secop = {
   tagline: "Ask in plain language. Get the contract.",
   summary:
     "Colombia publishes its public procurement on SECOP II, and finding the right contract there meant filtering by hand, one criterion at a time. I built Proyectos y Servicios RACO a platform that searches, filters, notifies and reports on those contracts, with an assistant that takes the question as you would say it.",
+  moments: [
+    {
+      title: "Filters the portal does not have.",
+      body: "Here the contracting entity and a minimum value are plain fields. On the SECOP II portal, choosing an entity means knowing its tax ID, and there is no filter by value at all.",
+      clip: secopClip(
+        "search",
+        "The search form is filled with a keyword, an entity and a minimum value. After pressing search, matching contracts load below.",
+      ),
+    },
+    {
+      title: "The same search, as a sentence.",
+      body: "The assistant takes the question the way you would say it, builds the query and answers with the contracts it found: entity, value, status and a link to each process.",
+      clip: secopClip(
+        "assistant",
+        "In the assistant chat, an answer listing road-maintenance contracts above 500 million pesos appears, one contract after another.",
+      ),
+    },
+  ] satisfies Moment[],
   /**
-   * The assistant's flow, shown as an illustration. The question is one of the
-   * scenarios from the timed user tests; the query is representative of what
-   * the assistant builds, not a transcript.
+   * What happens behind the assistant, drawn as three steps. The question is
+   * the one asked in the clip; the query is representative of what the
+   * assistant builds, not a transcript.
    */
   flow: {
-    question: "Supply contracts in Cundinamarca worth more than 500 million",
+    question: "Road-maintenance contracts from the Urban Development Institute above 500 million",
     model: "GPT-4o-mini through Spring AI",
     query: [
       "SELECT entidad, objeto, valor",
-      "WHERE departamento = 'Cundinamarca'",
+      "WHERE entidad = 'Instituto de Desarrollo Urbano'",
       "  AND valor > 500000000",
-      "  AND objeto LIKE '%suministro%'",
+      "  AND objeto LIKE '%mantenimiento vial%'",
       "LIMIT 5",
     ],
     source: "Socrata open-data API",

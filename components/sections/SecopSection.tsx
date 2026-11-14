@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { CountUp } from "@/components/motion/CountUp";
+import { ClipMoments } from "@/components/project/ClipMoments";
 import { PointList, ProjectIntro, TechLine } from "@/components/project/parts";
 import { secop } from "@/data/projects";
 
@@ -8,9 +9,9 @@ function step(n: number): CSSProperties {
 }
 
 /**
- * The assistant's path from a sentence to a result, lit one step at a time.
- * It is a drawing of the flow, not a screenshot: the platform was built for a
- * client and its screens are not shown here.
+ * What happens behind the assistant, from a sentence to a result, lit one step
+ * at a time. The clips below show the product; this shows the part of it that
+ * never appears on screen.
  */
 function AssistantFlow() {
   const { flow } = secop;
@@ -50,7 +51,7 @@ function AssistantFlow() {
         </div>
       </div>
       <figcaption className="px-4 pb-2 pt-4 text-[0.8125rem] text-faint">
-        Illustration of the assistant&apos;s flow. The query is representative, not a transcript.
+        What happens behind the answer. The query is representative, not a transcript.
       </figcaption>
     </figure>
   );
@@ -81,6 +82,10 @@ export function SecopSection() {
           <div className="lg:col-span-7">
             <AssistantFlow />
           </div>
+        </div>
+
+        <div className="mt-24 md:mt-36">
+          <ClipMoments moments={secop.moments} />
         </div>
 
         <div className="mt-24 md:mt-36">

@@ -35,7 +35,7 @@ that content is the source of truth here. Nothing in this redesign adds a claim.
 | Navigation | Floating dark-glass island | Full-width bar glued to the top |
 | Motion runtime | GSAP + ScrollTrigger + Lenis, plus CSS | OGL shader background, magnetic cursor, scramble text (all removed) |
 | Pulse media | Short silent clips cut from the demo recording | Embedding the full recording; screenshots |
-| SECOP II media | A drawn illustration of the assistant's flow | Screens of the client's system (not cleared for publication) |
+| SECOP II media | Two clips cut from the demo recording (search, assistant) plus a drawn illustration of what the assistant does behind the answer | The full recording, which shows a mailbox and an email address |
 | SmartPark media | Animated architecture diagram + click-to-play YouTube demo | A static cover image |
 
 ## Visual system
@@ -57,8 +57,8 @@ Media sits in a `.frame`: an outer tray and an inner plate with concentric radii
 2. **Statement** — one paragraph on how he works, inked in word by word on scroll.
 3. **Pulse** (dark) — the hero clip grows from a window to full width as the page
    scrolls; then two moments with their own clips; then three engineering decisions.
-4. **SECOP II** (light) — the assistant's flow lit step by step; four measured figures
-   with the sample sizes stated; three points.
+4. **SECOP II** (light) — the assistant's flow lit step by step; two moments with
+   their own clips; four measured figures with the sample sizes stated; three points.
 5. **SmartPark** (dark) — animated event diagram; YouTube demo; three points.
 6. **Experience** — SLB and RACO as an editorial timeline; education below.
 7. **Stack** — technologies grouped by purpose, set as large type. No meters.
@@ -79,8 +79,9 @@ reduced motion, or no JavaScript — every element is simply visible and nothing
 
 ## Media
 
-Pulse clips are cut from the demo recording with the browser chrome and taskbar cropped
-out, silent, 10–13 s, about 0.4–0.5 MB each. Each has two cuts: `wide` (both sessions
+Pulse and SECOP II clips are cut from their demo recordings with the browser chrome,
+taskbar and navigation bar (which shows an email address) cropped out, silent, 10–14 s,
+0.2–1 MB each. The SECOP II recording's mailbox segment is not used. Each has two cuts: `wide` (both sessions
 side by side) and `tall` (stacked) for phones. Clips use `preload="none"`, play only
 while on screen, never autoplay under reduced motion, and always carry a pause control.
 
