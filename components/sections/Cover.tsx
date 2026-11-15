@@ -8,7 +8,7 @@ import { CSS_EASE, DURATION, stagger } from "@/lib/motion";
 
 const FIGURES = [
   { figure: "3+", label: "Years shipping" },
-  { figure: "30%", label: "Faster queries" },
+  { figure: "90%+", label: "Less search time" },
   { figure: "95", label: "Tests on Pulse" },
 ];
 
@@ -85,7 +85,7 @@ export function Cover() {
         <div className="flex flex-col gap-12 lg:flex-row lg:items-end lg:justify-between">
           <p className="max-w-[46ch] text-base leading-relaxed text-muted">
             Backend-leaning full-stack developer. Java, Spring Boot and PostgreSQL —
-            three years building and optimising applications that run for real.
+            over three years building and optimising applications that run for real.
           </p>
 
           <div className="flex gap-10">
@@ -109,7 +109,7 @@ export function Cover() {
           edge (T13) — while the first column's text still lines up with the
           headline above it.
         */}
-        <div className="-ml-6 grid w-[calc(100%+1.5rem)] gap-px border-t border-border sm:grid-cols-2 lg:grid-cols-4">
+        <div className="-ml-6 grid w-[calc(100%+1.5rem)] gap-px border-t border-border sm:grid-cols-3">
           {projects.map((project, index) => (
             <Link
               key={project.title}
