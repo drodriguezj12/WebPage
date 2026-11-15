@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 import { profile } from "@/data/profile";
-import { loadGeist } from "@/lib/ogFont";
+import { loadInter } from "@/lib/ogFont";
 
 export const alt = "Daniel Rodriguez | Backend / Full-Stack Developer";
 export const size = { width: 1200, height: 630 };
@@ -9,7 +9,7 @@ export const contentType = "image/png";
 const ACCENTS = ["#f0429f", "#c99a1c", "#3ecf8e"];
 
 export default async function OpenGraphImage() {
-  const [medium, semibold] = await Promise.all([loadGeist(500), loadGeist(600)]);
+  const [medium, semibold] = await Promise.all([loadInter(500), loadInter(600)]);
 
   return new ImageResponse(
     (
@@ -22,7 +22,7 @@ export default async function OpenGraphImage() {
           justifyContent: "space-between",
           backgroundColor: "#f5f5f7",
           padding: "72px 80px",
-          fontFamily: "Geist",
+          fontFamily: "Inter",
           color: "#1d1d1f",
         }}
       >
@@ -63,8 +63,8 @@ export default async function OpenGraphImage() {
     {
       ...size,
       fonts: [
-        { name: "Geist", data: medium, weight: 500, style: "normal" },
-        { name: "Geist", data: semibold, weight: 600, style: "normal" },
+        { name: "Inter", data: medium, weight: 500, style: "normal" },
+        { name: "Inter", data: semibold, weight: 600, style: "normal" },
       ],
     },
   );

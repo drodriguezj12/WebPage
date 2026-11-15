@@ -22,8 +22,11 @@
   --color-paper: #f5f5f7;
   --color-night: #0a0a0c;
 
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* The system's San Francisco where it exists, Inter everywhere else. */
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", var(--font-inter),
+    system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", var(--font-geist-mono), monospace;
 
   --ease-fluid: cubic-bezier(0.32, 0.72, 0, 1);
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
@@ -76,7 +79,6 @@ html {
 body {
   background-color: #f5f5f7;
   color: #1d1d1f;
-  font-feature-settings: "ss01", "cv11";
 }
 
 [data-theme] {
@@ -111,8 +113,8 @@ html.lenis body {
   /* Capped by height too, so the hero's project rail stays on the first screen. */
   font-size: clamp(2.75rem, min(8.6vw, 11vh), 8rem);
   font-weight: 600;
-  letter-spacing: -0.045em;
-  line-height: 0.96;
+  letter-spacing: -0.04em;
+  line-height: 0.98;
   text-wrap: balance;
 }
 
@@ -214,12 +216,16 @@ html.lenis body {
  * reduced motion) every rule below is inert and the page is simply there.
  */
 
-@keyframes line-rise {
+@keyframes char-rise {
   from {
-    transform: translateY(105%);
+    opacity: 0;
+    transform: translateY(0.45em) rotate(5deg);
+    filter: blur(10px);
   }
   to {
-    transform: translateY(0);
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
   }
 }
 
@@ -234,23 +240,37 @@ html.lenis body {
   }
 }
 
-.line-mask {
-  display: block;
-  overflow: hidden;
-  /* Room for descenders, which the tight line-height would otherwise clip. */
-  padding-bottom: 0.08em;
-  margin-bottom: -0.08em;
+/* A word never breaks in the middle, however its letters are wrapped. */
+.hero-word {
+  display: inline-block;
+  white-space: nowrap;
 }
 
-html.motion .hero-line {
-  display: block;
-  animation: line-rise 1s var(--ease-out-soft) both;
-  animation-delay: calc(var(--i, 0) * 90ms + 80ms);
+html.motion .hero-char {
+  display: inline-block;
+  animation: char-rise 0.9s var(--ease-out-soft) both;
+  animation-delay: calc(var(--c, 0) * 28ms + 120ms);
+}
+
+/* The network stays out of the way of the text: strongest top right. */
+.hero-field {
+  opacity: 0;
+  mask-image: radial-gradient(120% 95% at 88% 22%, #000 25%, transparent 78%);
+}
+
+html.motion .hero-field {
+  animation: fade-in 1.6s ease-out 0.5s both;
+}
+
+@keyframes fade-in {
+  to {
+    opacity: 1;
+  }
 }
 
 html.motion .hero-item {
   animation: fade-rise 0.9s var(--ease-out-soft) both;
-  animation-delay: calc(var(--i, 0) * 80ms + 420ms);
+  animation-delay: calc(var(--i, 0) * 80ms + 520ms);
 }
 
 /* Scroll reveals: RevealObserver flips data-revealed when the element enters. */
@@ -280,15 +300,235 @@ html.motion .packet {
   visibility: visible;
 }
 
-/* SECOP flow: each step lights up in turn once the figure is on screen. */
-html.motion [data-flow] [data-step] {
-  opacity: 0.28;
-  transition: opacity 0.7s var(--ease-out-soft);
-  transition-delay: calc(var(--step) * 520ms);
+/*
+ * SECOP flow, played once when its figure is revealed: the question types
+ * itself (.type-char), then each .flow-stage arrives at its own --at.
+ */
+html.motion [data-flow] .type-char {
+  opacity: 0;
 }
 
-html.motion [data-flow][data-revealed] [data-step] {
+html.motion [data-flow][data-revealed] .type-char {
   opacity: 1;
+  transition: opacity 1ms linear;
+  transition-delay: calc(var(--c) * 24ms + 400ms);
+}
+
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.type-caret {
+  display: none;
+}
+
+html.motion .type-caret {
+  display: inline-block;
+  width: 0.5em;
+  height: 0.9em;
+  margin-left: 0.12em;
+  vertical-align: -0.08em;
+  background: var(--accent);
+  animation: caret-blink 1s steps(1) infinite;
+}
+
+html.motion [data-flow] .flow-stage {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+html.motion [data-flow][data-revealed] .flow-stage {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.6s var(--ease-out-soft),
+    transform 0.6s var(--ease-out-soft);
+  transition-delay: var(--at, 0ms);
+}
+
+/* ------------------------------------------------------------ odometer */
+
+.odometer {
+  display: inline-flex;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.odo-col,
+.odo-static {
+  display: block;
+  height: 1em;
+  line-height: 1em;
+  white-space: pre;
+}
+
+.odo-col {
+  overflow: hidden;
+}
+
+.odo-reel {
+  display: block;
+  transform: translateY(calc(var(--d) * -1em));
+  transition: transform 1.8s var(--ease-fluid);
+  transition-delay: calc(var(--c, 0) * 90ms + 150ms);
+}
+
+.odo-reel > span {
+  display: block;
+  height: 1em;
+}
+
+/* Reels rest on zero until their figure is revealed, then roll to the value. */
+html.motion [data-reveal]:not([data-revealed]) .odo-reel {
+  transform: translateY(0);
+}
+
+@keyframes odo-roll {
+  from {
+    transform: translateY(0);
+  }
+}
+
+html.motion .hero-item .odo-reel {
+  animation: odo-roll 1.8s var(--ease-fluid) both;
+  animation-delay: calc(var(--c, 0) * 90ms + 900ms);
+}
+
+/* ------------------------------------------------------- scroll effects */
+
+/* A dark panel arrives narrower and opens (ScrollFx drives --panel-inset). */
+@media (min-width: 768px) {
+  html.motion [data-panel] {
+    clip-path: inset(
+      calc(var(--panel-inset, 0) * 0.5vh) calc(var(--panel-inset, 0) * 1%) 0 round 3rem
+    );
+  }
+}
+
+/* Display text that fills with ink as it is scrolled (ScrollFx drives --fill). */
+html.motion [data-fill] {
+  color: transparent;
+  background-image: linear-gradient(
+    90deg,
+    var(--fg) calc(var(--fill, 100) * 1%),
+    color-mix(in srgb, var(--fg) 24%, transparent) calc(var(--fill, 100) * 1%)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* -------------------------------------------------------------- marquee */
+
+/* Without motion: an ordinary wrapped list inside the page's container. */
+.marquee {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 1280px;
+  padding-inline: 1.25rem;
+}
+
+.marquee-row {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 1.5rem;
+}
+
+.marquee-row > li[aria-hidden],
+.marquee-dup {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .marquee {
+    padding-inline: 2.5rem;
+  }
+}
+
+/* With motion: one line, edge to edge, moved by Marquee. */
+html.motion .marquee {
+  max-width: none;
+  padding-inline: 0;
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+
+html.motion .marquee-inner {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+html.motion .marquee-row {
+  flex-wrap: nowrap;
+  column-gap: 0;
+  white-space: nowrap;
+}
+
+html.motion .marquee-row > li {
+  display: block;
+  padding-right: clamp(1.5rem, 3.4vw, 3.25rem);
+}
+
+html.motion .marquee-dup {
+  display: block;
+}
+
+/* Alternate items step back, so the line reads as a rhythm and not a block. */
+html.motion .marquee-row > li:nth-child(even) {
+  color: var(--faint);
+}
+
+/* --------------------------------------------------- horizontal moments */
+
+/* Default: a vertical stack. */
+.hscroll-row {
+  display: grid;
+  gap: 5rem;
+}
+
+.hscroll-progress {
+  display: none;
+}
+
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  html.motion .hscroll-track {
+    height: calc(var(--n) * 100vh);
+  }
+  html.motion .hscroll-sticky {
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+  html.motion .hscroll-row {
+    display: flex;
+    gap: 0;
+    width: 100%;
+    will-change: transform;
+  }
+  html.motion .hscroll-panel {
+    flex: 0 0 100%;
+  }
+  html.motion .hscroll-progress {
+    display: block;
+    position: absolute;
+    left: 50%;
+    bottom: 7vh;
+    width: 120px;
+    height: 2px;
+    transform: translateX(-50%);
+    background: var(--line);
+  }
+  html.motion .hscroll-progress > span {
+    display: block;
+    height: 100%;
+    background: var(--fg);
+    transform-origin: left;
+  }
 }
 
 /* Pulse stage: tall scroll track with a sticky viewport, desktop only. */

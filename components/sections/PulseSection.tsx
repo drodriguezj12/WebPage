@@ -1,7 +1,7 @@
 import { ClipVideo } from "@/components/ClipVideo";
 import { PillLink } from "@/components/PillLink";
 import { ScaleStage } from "@/components/motion/ScaleStage";
-import { ClipMoments } from "@/components/project/ClipMoments";
+import { HorizontalMoments } from "@/components/project/HorizontalMoments";
 import { PointList, ProjectIntro, TechLine } from "@/components/project/parts";
 import { pulse } from "@/data/projects";
 
@@ -11,6 +11,7 @@ export function PulseSection() {
       id="pulse"
       data-theme="dark"
       data-accent="pulse"
+      data-panel
       aria-labelledby="pulse-title"
       className="mx-2 rounded-[2rem] md:mx-4 md:rounded-[3rem]"
     >
@@ -38,7 +39,7 @@ export function PulseSection() {
         </div>
       </ScaleStage>
 
-      <div className="mx-auto w-full max-w-[1280px] px-5 pb-24 md:px-10 md:pb-36">
+      <div className="mx-auto w-full max-w-[1280px] px-5 md:px-10">
         <div className="grid gap-10 py-16 md:py-28 lg:grid-cols-[1fr_auto] lg:items-end">
           <p data-reveal className="lede max-w-[52ch] text-[clamp(1.25rem,2.2vw,1.75rem)] leading-snug text-fg">
             {pulse.summary}
@@ -51,9 +52,12 @@ export function PulseSection() {
           </div>
         </div>
 
-        <ClipMoments moments={pulse.moments} />
+      </div>
 
-        <div className="mt-24 md:mt-36">
+      <HorizontalMoments moments={pulse.moments} />
+
+      <div className="mx-auto w-full max-w-[1280px] px-5 pb-24 md:px-10 md:pb-36">
+        <div className="mt-24 md:mt-36 lg:mt-16">
           <h3 data-reveal className="display-md max-w-[18ch]">
             Decisions that hold it together.
           </h3>

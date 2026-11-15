@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import { PillLink } from "@/components/PillLink";
-import { CountUp } from "@/components/motion/CountUp";
+import { Odometer } from "@/components/motion/Odometer";
+import { SignalField } from "@/components/motion/SignalField";
 import { profile } from "@/data/profile";
 import { pulse, secop, smartpark } from "@/data/projects";
 
@@ -15,33 +16,66 @@ function order(i: number): CSSProperties {
 }
 
 /**
+ * The headline arrives letter by letter. Each letter is its own inline block so
+ * it can move; letters are grouped into words so a line can only break between
+ * words. The heading's accessible name is the plain sentence.
+ */
+function Headline({ lines }: { lines: readonly string[] }) {
+  let position = 0;
+
+  return (
+    <h1 className="display-xl mt-7 md:mt-[4vh]" aria-label={lines.join(" ")}>
+      {lines.map((line, lineIndex) => (
+        <span
+          key={line}
+          aria-hidden="true"
+          className={`block ${lineIndex === lines.length - 1 ? "text-faint" : ""}`}
+        >
+          {line.split(" ").map((word, wordIndex) => (
+            <span key={`${word}-${wordIndex}`}>
+              {wordIndex > 0 ? " " : null}
+              <span className="hero-word">
+                {[...word].map((char) => (
+                  <span
+                    key={position}
+                    className="hero-char"
+                    style={{ "--c": position++ } as CSSProperties}
+                  >
+                    {char}
+                  </span>
+                ))}
+              </span>
+            </span>
+          ))}
+        </span>
+      ))}
+    </h1>
+  );
+}
+
+/**
  * The first screen is visible from first paint: its entrance is plain CSS
- * (`.hero-line` / `.hero-item`), so nothing waits on JavaScript.
+ * (`.hero-char` / `.hero-item`), so nothing waits on JavaScript. The network
+ * behind it is the only scripted part, and the page reads the same without it.
  */
 export function Hero() {
   return (
-    <section id="top" className="relative flex min-h-[100dvh] flex-col px-5 pb-4 pt-28 md:px-10 md:pt-[13vh]">
-      <div className="mx-auto flex w-full max-w-[1280px] flex-1 flex-col">
+    <section
+      id="top"
+      className="relative flex min-h-[100dvh] flex-col overflow-hidden px-5 pb-4 pt-28 md:px-10 md:pt-[12.5vh]"
+    >
+      <SignalField className="hero-field pointer-events-none absolute inset-0 h-full w-full" />
+
+      <div className="relative mx-auto flex w-full max-w-[1280px] flex-1 flex-col">
         <p className="eyebrow hero-item self-start" style={order(0)}>
           <span className="eyebrow-dot" aria-hidden="true" />
           {profile.role} · {profile.location}
         </p>
 
-        <h1 className="display-xl mt-7 md:mt-[4vh]">
-          {profile.headline.map((line, index) => (
-            <span className="line-mask" key={line}>
-              <span
-                className={`hero-line ${index === profile.headline.length - 1 ? "text-faint" : ""}`}
-                style={order(index)}
-              >
-                {line}
-              </span>
-            </span>
-          ))}
-        </h1>
+        <Headline lines={profile.headline} />
 
         <div className="mt-10 grid gap-10 md:mt-[4vh] lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-20">
-          <div className="hero-item" style={order(1)}>
+          <div className="hero-item" style={order(3)}>
             <p className="lede max-w-[46ch]">{profile.intro}</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <PillLink href="#work" variant="solid" icon="down">
@@ -53,11 +87,11 @@ export function Hero() {
             </div>
           </div>
 
-          <dl className="hero-item grid grid-cols-3 gap-6" style={order(2)}>
+          <dl className="hero-item grid grid-cols-3 gap-6" style={order(4)}>
             {profile.figures.map((item) => (
               <div key={item.label} className="border-t border-line pt-4">
                 <dd className="text-[clamp(1.75rem,3.4vw,2.75rem)] font-semibold tracking-[-0.04em]">
-                  <CountUp figure={item.figure} />
+                  <Odometer figure={item.figure} />
                 </dd>
                 <dt className="mt-1.5 text-[0.8125rem] leading-snug text-muted">{item.label}</dt>
               </div>
@@ -66,14 +100,13 @@ export function Hero() {
         </div>
 
         {/*
-          The project index doubles as the page's signature: a hairline with
-          three packets travelling along it, one in each project's colour.
-          Systems that pass messages are what the work below is about.
+          The project index: a hairline with three packets travelling along it,
+          one in each project's colour.
         */}
         <nav
           aria-label="Projects"
           className="hero-item relative mt-auto pt-12 md:pt-[4vh]"
-          style={order(3)}
+          style={order(5)}
         >
           <svg
             aria-hidden="true"

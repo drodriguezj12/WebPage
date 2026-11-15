@@ -41,7 +41,13 @@ export function ScaleStage({ caption, children }: { caption: ReactNode; children
         },
       });
       timeline
-        .fromTo(media, { scale: 0.6, yPercent: 20 }, { scale: 1, yPercent: 0 }, 0)
+        .fromTo(
+          media,
+          // Starts tipped back like a screen lying on a desk, and stands up as it grows.
+          { scale: 0.6, yPercent: 22, rotateX: 34, transformPerspective: 1500 },
+          { scale: 1, yPercent: 0, rotateX: 0, transformPerspective: 1500 },
+          0,
+        )
         .fromTo(captionEl, { opacity: 1, yPercent: 0 }, { opacity: 0, yPercent: -40, duration: 0.45 }, 0);
     });
 
@@ -54,7 +60,7 @@ export function ScaleStage({ caption, children }: { caption: ReactNode; children
         <div ref={captionRef} className="lg:absolute lg:inset-x-0 lg:top-[12vh] lg:z-10">
           {caption}
         </div>
-        <div ref={mediaRef} className="w-full max-w-[1500px] will-change-transform">
+        <div ref={mediaRef} className="w-full max-w-[1500px] origin-bottom will-change-transform">
           {children}
         </div>
       </div>

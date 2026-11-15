@@ -15,11 +15,12 @@ export function Contact() {
     <section
       id="contact"
       data-theme="dark"
+      data-panel
       aria-labelledby="contact-title"
       className="mx-2 rounded-[2rem] px-5 py-24 md:mx-4 md:rounded-[3rem] md:px-10 md:py-40"
     >
       <div className="mx-auto w-full max-w-[1280px]">
-        <h2 id="contact-title" data-reveal className="display-xl">
+        <h2 id="contact-title" data-fill className="display-xl">
           Let&apos;s talk.
         </h2>
         <p data-reveal className="lede mt-8 max-w-[44ch]">

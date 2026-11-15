@@ -12,13 +12,24 @@ export function Experience() {
           Experience
         </h2>
 
-        <ol className="mt-14 md:mt-24">
+        {/* The rule on the left draws itself down the list as it is scrolled. */}
+        <ol className="relative mt-14 pl-6 md:mt-24 md:pl-10">
+          <span aria-hidden="true" className="absolute left-0 top-0 h-full w-px bg-line" />
+          <span
+            data-draw
+            aria-hidden="true"
+            className="absolute left-0 top-0 h-full w-px origin-top bg-fg"
+          />
           {experience.map((item) => (
             <li
               key={item.company}
               data-reveal
-              className="grid gap-6 border-t border-line py-10 md:py-14 lg:grid-cols-12 lg:gap-10"
+              className="relative grid gap-6 border-t border-line py-10 md:py-14 lg:grid-cols-12 lg:gap-10"
             >
+              <span
+                aria-hidden="true"
+                className="absolute -left-6 top-0 h-[7px] w-[7px] -translate-x-[3px] -translate-y-1/2 rounded-full bg-fg md:-left-10"
+              />
               <p className="mono-label lg:col-span-3 lg:pt-3">{item.period}</p>
               <div className="lg:col-span-4">
                 <h3 className="display-md">{item.company}</h3>

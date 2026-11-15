@@ -1,39 +1,66 @@
 import type { CSSProperties } from "react";
-import { CountUp } from "@/components/motion/CountUp";
+import { Odometer } from "@/components/motion/Odometer";
 import { ClipMoments } from "@/components/project/ClipMoments";
 import { PointList, ProjectIntro, TechLine } from "@/components/project/parts";
 import { secop } from "@/data/projects";
 
-function step(n: number): CSSProperties {
-  return { "--step": n } as CSSProperties;
+/**
+ * Text that types itself once its figure is on screen. Every character is in
+ * the markup from the start, so nothing shifts as it appears; globals.css only
+ * staggers their opacity. Assistive technology reads the sentence once.
+ */
+function Typed({ text }: { text: string }) {
+  return (
+    <>
+      <span className="sr-only">{text}</span>
+      <span aria-hidden="true">
+        {[...text].map((char, index) => (
+          <span key={index} className="type-char" style={{ "--c": index } as CSSProperties}>
+            {char}
+          </span>
+        ))}
+      </span>
+    </>
+  );
+}
+
+/** When a stage of the flow starts, in milliseconds after it is revealed. */
+function at(ms: number): CSSProperties {
+  return { "--at": `${ms}ms` } as CSSProperties;
 }
 
 /**
- * What happens behind the assistant, from a sentence to a result, lit one step
- * at a time. The clips below show the product; this shows the part of it that
- * never appears on screen.
+ * What happens behind the assistant, played out once: the question types
+ * itself, the query is written line by line, and the answer arrives. The clips
+ * below show the product; this shows the part of it that never appears on
+ * screen.
  */
 function AssistantFlow() {
   const { flow } = secop;
+  const question = `\u201c${flow.question}\u201d`;
+  // The question takes about this long to type (24 ms a character).
+  const asked = question.length * 24 + 500;
+  const written = asked + flow.query.length * 240 + 400;
 
   return (
     <figure data-theme="dark" data-accent="secop" className="frame bg-transparent">
       <div data-flow data-reveal className="frame-core grid gap-px bg-white/10 text-fg">
-        <div data-step style={step(0)} className="bg-night p-6 md:p-9">
+        <div className="bg-night p-6 md:p-9">
           <p className="mono-label">You ask</p>
           <p className="mt-4 text-[clamp(1.25rem,2.4vw,1.875rem)] font-semibold leading-tight tracking-[-0.03em]">
-            “{flow.question}”
+            <Typed text={question} />
+            <span aria-hidden="true" className="type-caret" />
           </p>
         </div>
 
-        <div data-step style={step(1)} className="bg-night p-6 md:p-9">
-          <p className="mono-label">
+        <div className="bg-night p-6 md:p-9">
+          <p className="mono-label flow-stage" style={at(asked)}>
             <span className="text-accent">{flow.model}</span> writes the query
           </p>
           <pre className="mt-4 overflow-x-auto font-mono text-[0.8125rem] leading-relaxed text-muted md:text-[0.9375rem]">
             <code>
-              {flow.query.map((line) => (
-                <span key={line} className="block">
+              {flow.query.map((line, index) => (
+                <span key={line} className="flow-stage block" style={at(asked + 200 + index * 240)}>
                   {line}
                 </span>
               ))}
@@ -41,11 +68,14 @@ function AssistantFlow() {
           </pre>
         </div>
 
-        <div data-step style={step(2)} className="bg-night p-6 md:p-9">
-          <p className="mono-label">
+        <div className="bg-night p-6 md:p-9">
+          <p className="mono-label flow-stage" style={at(written)}>
             <span className="text-accent">{flow.source}</span> answers
           </p>
-          <p className="mt-4 max-w-[48ch] text-[0.9375rem] leading-relaxed text-muted md:text-base">
+          <p
+            className="flow-stage mt-4 max-w-[48ch] text-[0.9375rem] leading-relaxed text-muted md:text-base"
+            style={at(written + 300)}
+          >
             {flow.result}
           </p>
         </div>
@@ -101,7 +131,7 @@ export function SecopSection() {
                 className="border-t border-line py-7"
               >
                 <dd className="text-[clamp(2.5rem,5vw,4.25rem)] font-semibold leading-none tracking-[-0.05em] text-accent">
-                  <CountUp figure={item.figure} />
+                  <Odometer figure={item.figure} />
                 </dd>
                 <dt className="mt-4 max-w-[26ch] text-[0.9375rem] leading-snug text-muted">
                   {item.label}

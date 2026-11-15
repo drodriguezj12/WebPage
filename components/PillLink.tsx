@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { ArrowDownIcon, ArrowUpRightIcon } from "@/components/icons";
+import { Magnetic } from "@/components/motion/Magnetic";
 
 type Props = {
   href: string;
@@ -32,18 +33,20 @@ export function PillLink({ href, children, variant = "ghost", icon = "out", down
       : "group-hover:translate-y-0.5";
 
   return (
-    <a
-      href={href}
-      download={download}
-      {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-      className={`focus-ring group inline-flex items-center gap-3 rounded-full py-1.5 pl-5 pr-1.5 text-[0.9375rem] font-medium tracking-[-0.01em] transition-[background-color,transform] duration-500 ease-fluid active:scale-[0.97] ${surface}`}
-    >
-      {children}
-      <span
-        className={`grid h-8 w-8 place-items-center rounded-full transition-transform duration-500 ease-fluid ${seat} ${nudge}`}
+    <Magnetic>
+      <a
+        href={href}
+        download={download}
+        {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+        className={`focus-ring group inline-flex items-center gap-3 rounded-full py-1.5 pl-5 pr-1.5 text-[0.9375rem] font-medium tracking-[-0.01em] transition-[background-color,transform] duration-500 ease-fluid active:scale-[0.97] ${surface}`}
       >
-        <Icon className="h-3.5 w-3.5" />
-      </span>
-    </a>
+        {children}
+        <span
+          className={`grid h-8 w-8 place-items-center rounded-full transition-transform duration-500 ease-fluid ${seat} ${nudge}`}
+        >
+          <Icon className="h-3.5 w-3.5" />
+        </span>
+      </a>
+    </Magnetic>
   );
 }

@@ -31,7 +31,7 @@ that content is the source of truth here. Nothing in this redesign adds a claim.
 | Concept | Product pages: one full section per project | A single continuous narrative; an editorial index with case-study pages |
 | Colour | Monochrome; the only colour is each project's own accent | A site-wide accent; gradients |
 | Surfaces | Light page with dark project panels alternating | All dark (v2); all light |
-| Type | Geist for everything, Geist Mono for labels | Big Shoulders (v2); Inter |
+| Type | The system's San Francisco where it exists, Inter (with its display optical size) everywhere else; SF Mono / Geist Mono for labels | Serving SF Pro as a web font (its licence does not allow it); Big Shoulders (v2); Geist |
 | Navigation | Floating dark-glass island | Full-width bar glued to the top |
 | Motion runtime | GSAP + ScrollTrigger + Lenis, plus CSS | OGL shader background, magnetic cursor, scramble text (all removed) |
 | Pulse media | Short silent clips cut from the demo recording | Embedding the full recording; screenshots |
@@ -98,3 +98,31 @@ Existing unit tests for the contact pipeline, figure parsing and motion tokens s
 Tests for removed modules (scramble, deep-link hash, scroll control) are removed with
 them. Verification of the page itself is manual: desktop and phone widths, reduced
 motion, keyboard, console.
+
+## Motion pass (2026-11-15)
+
+A second pass, after the first version read as correct but quiet. Each addition is tied
+to something the page is already saying; none is decoration on its own.
+
+| Where | What moves | How |
+|---|---|---|
+| Hero | A drifting network of nodes with packets in the three project colours, leaning towards the pointer; the headline arrives letter by letter | `SignalField` (canvas 2D, paused off screen and when the tab is hidden); CSS keyframes per letter |
+| Dark panels | Each arrives narrower and opens to full width | `ScrollFx` drives `--panel-inset`; CSS turns it into a `clip-path` |
+| Pulse hero clip | Starts tipped back in perspective and stands up as it grows | `ScaleStage` adds `rotateX` |
+| Pulse moments | Pass sideways while the page scrolls down | `HorizontalMoments`: CSS sticky track, GSAP scrub on `xPercent` |
+| SECOP II flow | The question types itself, the query is written line by line, the answer arrives | CSS only, started by `data-revealed` |
+| Figures | Digits roll into place like a counter | `Odometer`, CSS only; replaces the count-up |
+| SmartPark | A model of the event flow that can be played: pressing a space sends an event through the bus to the service that reacts | `ParkingSim`; runs by itself while on screen until the visitor takes over |
+| Stack | Each group drifts sideways, alternating direction, faster with the scroll | `Marquee` on GSAP's ticker |
+| Experience | The rule beside the timeline draws itself | `ScrollFx`, `data-draw` |
+| Contact | "Let's talk." fills with ink; buttons lean towards the pointer | `ScrollFx`, `data-fill`; `Magnetic` |
+
+Rejected: a preloader with a curtain (it delays the content for a visitor in a hurry) and
+a custom cursor.
+
+Guardrails are unchanged. Every effect has its finished state as the CSS default and only
+gets a starting state under `html.motion`; on a phone nothing is pinned and nothing moves
+sideways; under reduced motion the network does not run, the model does not play by
+itself, and its events arrive without travelling.
+
+The SmartPark model is labelled on the page as a model: it talks to no backend.

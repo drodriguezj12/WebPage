@@ -1,11 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { RevealObserver } from "@/components/motion/RevealObserver";
+import { ScrollFx } from "@/components/motion/ScrollFx";
 import { SmoothScrollProvider } from "@/components/motion/SmoothScrollProvider";
 import { SITE_URL } from "@/lib/site";
 
-const sans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
+/*
+ * Apple's San Francisco cannot be served as a web font, so the stack in
+ * globals.css asks for the system's own copy first (real SF on a Mac, iPhone
+ * or iPad) and falls back to Inter, the open typeface drawn to match it. The
+ * `opsz` axis gives Inter its display cut at headline sizes, as SF has.
+ */
+const sans = Inter({ variable: "--font-inter", subsets: ["latin"], axes: ["opsz"] });
 const mono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
@@ -51,6 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-[100dvh] font-sans antialiased">
         <SmoothScrollProvider />
         <RevealObserver />
+        <ScrollFx />
         {children}
       </body>
     </html>

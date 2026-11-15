@@ -1,11 +1,11 @@
 import { ImageResponse } from "next/og";
-import { loadGeist } from "@/lib/ogFont";
+import { loadInter } from "@/lib/ogFont";
 
 export const size = { width: 64, height: 64 };
 export const contentType = "image/png";
 
 export default async function Icon() {
-  const geist = await loadGeist(700);
+  const inter = await loadInter(700);
 
   return new ImageResponse(
     (
@@ -18,7 +18,7 @@ export default async function Icon() {
           justifyContent: "center",
           backgroundColor: "#1d1d1f",
           borderRadius: "16px",
-          fontFamily: "Geist",
+          fontFamily: "Inter",
           fontWeight: 700,
           fontSize: "30px",
           letterSpacing: "-0.06em",
@@ -28,6 +28,6 @@ export default async function Icon() {
         DR
       </div>
     ),
-    { ...size, fonts: [{ name: "Geist", data: geist, weight: 700, style: "normal" }] },
+    { ...size, fonts: [{ name: "Inter", data: inter, weight: 700, style: "normal" }] },
   );
 }

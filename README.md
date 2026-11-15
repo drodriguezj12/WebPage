@@ -50,8 +50,10 @@ app/                layout, page, icon, opengraph-image, robots, sitemap, 404
 components/         SiteNav, SiteFooter, PillLink, ClipVideo, YouTubeEmbed, ContactForm, icons
   sections/         one component per page section (Hero, Statement, PulseSection,
                     SecopSection, SmartParkSection, Experience, Stack, Contact)
-  project/          pieces shared by the project sections, and the SmartPark diagram
-  motion/           RevealObserver, ScaleStage, WordReveal, CountUp, SmoothScrollProvider
+  project/          pieces shared by the project sections, the horizontal moments, and
+                    the SmartPark model
+  motion/           RevealObserver, ScrollFx, ScaleStage, WordReveal, SignalField, Odometer,
+                    Marquee, Magnetic, SmoothScrollProvider
 data/               profile.ts and projects.ts: all the content lives here
 lib/                motion tokens, the reduced-motion hook, Lenis setup, site URLs,
                     contact validation
@@ -66,20 +68,25 @@ for reduced motion.
 
 ## Motion
 
-Three mechanisms, each for one job:
+Four mechanisms, each for one job:
 
-- **First screen:** CSS keyframes, so the hero is visible from first paint.
+- **First screen:** CSS keyframes, so the hero is visible from first paint. The network
+  behind it (`SignalField`) is a canvas that only runs while it is on screen.
 - **Entrances:** one `IntersectionObserver` (`RevealObserver`) flips `data-revealed` on
-  elements carrying `data-reveal`; CSS does the transition.
-- **Scroll-linked:** `ScaleStage` (the Pulse clip growing to full width) and
-  `WordReveal` (the statement), driven by GSAP ScrollTrigger on Lenis's clock.
+  elements carrying `data-reveal`; CSS does the rest, including the rolling figures
+  (`Odometer`) and the SECOP II flow typing itself.
+- **Scroll-linked:** `ScaleStage` (the Pulse clip standing up and growing),
+  `HorizontalMoments`, `WordReveal`, and `ScrollFx`, which drives the opening panels, the
+  timeline rule and the text fill through CSS custom properties.
+- **Continuous:** `Marquee` (the stack rows) and `ParkingSim` (the SmartPark model).
 
 The guardrails are requirements, not preferences:
 
-- `prefers-reduced-motion: reduce` turns off every entrance, the growing stage, the
-  travelling packets and clip autoplay. The site stays complete and readable, just still.
+- `prefers-reduced-motion: reduce` turns off every entrance, pin, sideways movement,
+  the hero network, the travelling packets and clip autoplay. The site stays complete
+  and readable, just still.
 - The page is readable without JavaScript: all copy is server-rendered and nothing is
   hidden waiting for a script.
-- Only `transform` and `opacity` are animated.
+- Only `transform`, `opacity` and (for the opening panels) `clip-path` are animated.
 - Clips download only when they come near the viewport, play only while on screen, and
   always have a pause control. The YouTube player loads only when play is pressed.
