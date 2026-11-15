@@ -6,7 +6,7 @@ export const profile = {
   phone: { display: "+57 318 479 3984", href: "tel:+573184793984" },
   headline: ["Built with", "the people who", "use it."],
   intro:
-    "I'm Daniel, a backend-leaning full-stack developer in Bogotá. For over three years I have built web platforms in Java, Spring Boot and Angular, and tested them against real databases and real users before calling them done.",
+    "I'm Daniel, a backend-leaning full-stack developer in Bogotá. For over three years I have built web platforms end to end, and tested them against real databases and real users before calling them done.",
   figures: [
     { figure: "3+", label: "years building web applications" },
     { figure: "90%+", label: "less search time, measured with users" },
