@@ -4,7 +4,7 @@ export const profile = {
   location: "Bogotá, Colombia",
   email: "drodriguezj1267@gmail.com",
   phone: { display: "+57 318 479 3984", href: "tel:+573184793984" },
-  headline: ["Backend systems,", "measured before", "they ship."],
+  headline: ["Built with", "the people who", "use it."],
   intro:
     "I'm Daniel, a backend-leaning full-stack developer in Bogotá. For over three years I have built web platforms in Java, Spring Boot and Angular, and tested them against real databases and real users before calling them done.",
   figures: [
