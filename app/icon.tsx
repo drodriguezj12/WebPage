@@ -1,22 +1,11 @@
 import { ImageResponse } from "next/og";
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
+import { loadInter } from "@/lib/ogFont";
 
 export const size = { width: 64, height: 64 };
 export const contentType = "image/png";
 
-// SVG favicons cannot load a web font, so the `DR` monogram from the old
-// icon.svg (a system-font text node) could not carry the new display type.
-// ImageResponse can: it loads the same Big Shoulders file opengraph-image.tsx
-// does and renders the mark exactly as before otherwise -- dark background,
-// hairline border, steel monogram.
 export default async function Icon() {
-  const bigShouldersBold = await readFile(
-    join(
-      process.cwd(),
-      "node_modules/@fontsource/big-shoulders/files/big-shoulders-latin-800-normal.woff",
-    ),
-  );
+  const inter = await loadInter(700);
 
   return new ImageResponse(
     (
@@ -24,34 +13,21 @@ export default async function Icon() {
         style={{
           width: "100%",
           height: "100%",
-          boxSizing: "border-box",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#08080a",
-          border: "1px solid #1b1b20",
-          borderRadius: "14px",
-          fontFamily: "Big Shoulders",
-          fontWeight: 800,
-          fontSize: "32px",
-          letterSpacing: "-0.02em",
-          textTransform: "uppercase",
-          color: "#cbd5e1",
+          backgroundColor: "#1d1d1f",
+          borderRadius: "16px",
+          fontFamily: "Inter",
+          fontWeight: 700,
+          fontSize: "30px",
+          letterSpacing: "-0.06em",
+          color: "#f5f5f7",
         }}
       >
         DR
       </div>
     ),
-    {
-      ...size,
-      fonts: [
-        {
-          name: "Big Shoulders",
-          data: bigShouldersBold,
-          weight: 800,
-          style: "normal",
-        },
-      ],
-    },
+    { ...size, fonts: [{ name: "Inter", data: inter, weight: 700, style: "normal" }] },
   );
 }

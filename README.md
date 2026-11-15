@@ -2,14 +2,15 @@
 
 Personal site: **https://danielrodriguezportfolio.vercel.app**
 
-A single-page narrative built with the Next.js App Router: a cover with the project
-index, a pinned Pulse feature section, the other projects, how I work, education and
-stack, and contact. The contact form delivers straight to my inbox.
+A single page built with the Next.js App Router. Each project is presented as its own
+product section: Pulse with clips cut from its demo, the SECOP II platform with its
+measured results, SmartPark with an animated architecture diagram. Then experience,
+stack and contact. The contact form delivers straight to my inbox.
 
 ## Stack
 
 Next.js 16 (App Router, Turbopack) · React 19 · TypeScript · Tailwind CSS 4 ·
-GSAP + ScrollTrigger · Lenis (smooth scroll) · OGL (WebGL background) · Vitest ·
+GSAP + ScrollTrigger · Lenis (smooth scroll) · Vitest ·
 Resend for transactional email · deployed on Vercel.
 
 ## Running it
@@ -46,44 +47,46 @@ Set them in Vercel under Settings → Environment Variables, or in a local `.env
 ```
 app/                layout, page, icon, opengraph-image, robots, sitemap, 404
   api/contact       route handler that validates and sends the contact message
-components/         shared components: SiteHeader, SiteFooter, ProjectCard, VideoEmbed,
-                    SectionHeader, ContactForm
-  sections/         one component per page section (Cover, PulseFeature, Work,
-                    HowIWork, Track, ContactSection)
-  motion/           motion primitives (ShaderField, Pinned, Stagger, SplitText,
-                    ScrambleText, CountUp, MagneticCursor, SmoothScrollProvider) —
-                    each owns one behaviour and knows nothing about the sections
-                    that use it
-data/               projects, skills and education — the content lives here
-lib/                motion tokens (lib/motion.ts), the reduced-motion/coarse-pointer
-                    hook, scroll control, the deep-link hash fix for the pinned
-                    section, site URLs, contact validation, and the Lenis
-                    smooth-scroll setup — unit tested except the reduced-motion
-                    hook and smooth-scroll setup (thin wrappers over browser and
-                    Lenis APIs) and the site-URL constants
+components/         SiteNav, SiteFooter, PillLink, ClipVideo, YouTubeEmbed, ContactForm, icons
+  sections/         one component per page section (Hero, Statement, PulseSection,
+                    SecopSection, SmartParkSection, Experience, Stack, Contact)
+  project/          pieces shared by the project sections, the horizontal moments, and
+                    the SmartPark model
+  motion/           RevealObserver, ScrollFx, ScaleStage, WordReveal, SignalField, Odometer,
+                    Marquee, Magnetic, SmoothScrollProvider
+data/               profile.ts and projects.ts: all the content lives here
+lib/                motion tokens, the reduced-motion hook, Lenis setup, site URLs,
+                    contact validation
+public/projects/    Pulse clips (a wide and a tall cut of each) and their posters
+docs/superpowers/   design specs
 ```
 
-To add a project, append an entry to `data/projects.ts`: `demoUrl` renders a
-click-to-play YouTube embed, `repoUrl` adds a link to the source, `cover` shows an
-image on the project card, and `screenshots` (an array of `{ src, alt, label, width,
-height }`) shows real product screenshots — currently used only for Pulse's featured
-section. All four are optional.
+Colours are semantic tokens set per section (`data-theme`, `data-accent`) in
+`app/globals.css`. Entrance animation only has a hidden starting state under
+`html.motion`, which an inline script sets before first paint unless the visitor asked
+for reduced motion.
 
 ## Motion
 
-Every scripted reveal — the pin, `SplitText`, `Stagger`, `ScrambleText`, `CountUp` —
-takes its duration and easing from `lib/motion.ts`, so that hand-off from JavaScript
-moves with one clock. A handful of plain CSS transitions (`ProjectCard`'s hover lift,
-the header's collapse) mirror those same values by hand rather than importing the
-tokens, since a Tailwind `duration-*`/`ease-*` utility can't reference a JS constant;
-Lenis's own scroll glide is configured directly in `lib/smoothScroll.ts`. The
-guardrails are requirements, not preferences:
+Four mechanisms, each for one job:
 
-- `prefers-reduced-motion: reduce` turns off the shader, the pin, the scramble and the
-  count-up. The site stays complete and readable, just still.
-- `pointer: coarse` turns off the shader and the magnetic cursor. Touch devices get the
-  typography and the reveals, not the parts that cost battery.
-- The page is readable without JavaScript: all copy is server-rendered, and motion is
-  an enhancement layered on top rather than something content depends on.
-- The WebGL background loads after first paint (never on the critical path) and pauses
-  itself when its section is off-screen or the tab is hidden.
+- **First screen:** CSS keyframes, so the hero is visible from first paint. The network
+  behind it (`SignalField`) is a canvas that only runs while it is on screen.
+- **Entrances:** one `IntersectionObserver` (`RevealObserver`) flips `data-revealed` on
+  elements carrying `data-reveal`; CSS does the rest, including the rolling figures
+  (`Odometer`) and the SECOP II flow typing itself.
+- **Scroll-linked:** `ScaleStage` (the Pulse clip standing up and growing),
+  `HorizontalMoments`, `WordReveal`, and `ScrollFx`, which drives the opening panels, the
+  timeline rule and the text fill through CSS custom properties.
+- **Continuous:** `Marquee` (the stack rows) and `ParkingSim` (the SmartPark model).
+
+The guardrails are requirements, not preferences:
+
+- `prefers-reduced-motion: reduce` turns off every entrance, pin, sideways movement,
+  the hero network, the travelling packets and clip autoplay. The site stays complete
+  and readable, just still.
+- The page is readable without JavaScript: all copy is server-rendered and nothing is
+  hidden waiting for a script.
+- Only `transform`, `opacity` and (for the opening panels) `clip-path` are animated.
+- Clips download only when they come near the viewport, play only while on screen, and
+  always have a pause control. The YouTube player loads only when play is pressed.

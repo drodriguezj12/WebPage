@@ -1,23 +1,27 @@
 import { SiteFooter } from "@/components/SiteFooter";
-import { SiteHeader } from "@/components/SiteHeader";
-import { ContactSection } from "@/components/sections/ContactSection";
-import { Cover } from "@/components/sections/Cover";
-import { HowIWork } from "@/components/sections/HowIWork";
-import { PulseFeature } from "@/components/sections/PulseFeature";
-import { Track } from "@/components/sections/Track";
-import { Work } from "@/components/sections/Work";
+import { SiteNav } from "@/components/SiteNav";
+import { Contact } from "@/components/sections/Contact";
+import { Experience } from "@/components/sections/Experience";
+import { Hero } from "@/components/sections/Hero";
+import { PulseSection } from "@/components/sections/PulseSection";
+import { SecopSection } from "@/components/sections/SecopSection";
+import { SmartParkSection } from "@/components/sections/SmartParkSection";
+import { Stack } from "@/components/sections/Stack";
+import { Statement } from "@/components/sections/Statement";
 
 export default function Home() {
   return (
     <>
-      <SiteHeader />
+      <SiteNav />
       <main id="main">
-        <Cover />
-        <PulseFeature />
-        <Work />
-        <HowIWork />
-        <Track />
-        <ContactSection />
+        <Hero />
+        <Statement />
+        <PulseSection />
+        <SecopSection />
+        <SmartParkSection />
+        <Experience />
+        <Stack />
+        <Contact />
       </main>
       <SiteFooter />
     </>
